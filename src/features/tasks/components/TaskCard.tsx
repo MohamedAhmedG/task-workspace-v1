@@ -1,14 +1,18 @@
+import { Calendar } from 'lucide-react'
 import { CSS } from '@dnd-kit/utilities'
 import { useSortable } from '@dnd-kit/sortable'
+import { formatDate } from '@/lib/utils'
 import type { Task } from '../types/task'
 
 const PRIORITY_STYLES = {
+  urgent: 'bg-red-600 text-white',
   high: 'bg-red-100 text-red-700',
   medium: 'bg-amber-100 text-amber-700',
   low: 'bg-emerald-100 text-emerald-700',
 } satisfies Record<Task['priority'], string>
 
 const PRIORITY_LABELS = {
+  urgent: 'Urgent',
   high: 'High',
   medium: 'Medium',
   low: 'Low',
@@ -98,6 +102,13 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
         <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
           {task.description}
         </p>
+      )}
+
+      {task.dueDate && (
+        <div className="flex items-center gap-1 mt-2 pt-2 border-t border-gray-100 text-xs text-gray-400">
+          <Calendar size={11} aria-hidden="true" />
+          <span>{formatDate(task.dueDate)}</span>
+        </div>
       )}
     </div>
   )

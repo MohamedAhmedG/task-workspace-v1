@@ -1,5 +1,5 @@
-export type TaskStatus = 'todo' | 'in_progress' | 'done'
-export type TaskPriority = 'low' | 'medium' | 'high'
+export type TaskStatus = 'todo' | 'in_progress' | 'in_review' | 'done'
+export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
 
 export interface Task {
   id: string
@@ -7,6 +7,7 @@ export interface Task {
   description: string
   status: TaskStatus
   priority: TaskPriority
+  dueDate: string
   createdAt: string
   updatedAt: string
 }
@@ -16,6 +17,7 @@ export interface CreateTaskInput {
   description: string
   status: TaskStatus
   priority: TaskPriority
+  dueDate: string
 }
 
 export interface UpdateTaskInput {
@@ -23,4 +25,5 @@ export interface UpdateTaskInput {
   description?: string
   status?: TaskStatus
   priority?: TaskPriority
+  dueDate?: string
 }

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
-export const taskStatusSchema = z.enum(['todo', 'in_progress', 'done'])
-export const taskPrioritySchema = z.enum(['low', 'medium', 'high'])
+export const taskStatusSchema = z.enum(['todo', 'in_progress', 'in_review', 'done'])
+export const taskPrioritySchema = z.enum(['low', 'medium', 'high', 'urgent'])
 
 export const taskSchema = z.object({
   id: z.string(),
@@ -9,6 +9,7 @@ export const taskSchema = z.object({
   description: z.string(),
   status: taskStatusSchema,
   priority: taskPrioritySchema,
+  dueDate: z.string(),
   createdAt: z.string(),
   updatedAt: z.string(),
 })
@@ -18,6 +19,7 @@ export const createTaskSchema = z.object({
   description: z.string().max(500, 'Description is too long'),
   status: taskStatusSchema,
   priority: taskPrioritySchema,
+  dueDate: z.string().min(1, 'Due date is required'),
 })
 
 export const updateTaskSchema = createTaskSchema.partial()

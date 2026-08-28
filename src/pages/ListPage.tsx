@@ -1,6 +1,7 @@
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { ChevronDown, ChevronUp, ChevronsUpDown, Pencil, Trash2 } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { formatDate } from '@/lib/utils'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,18 +19,20 @@ import { useTaskMutations } from '@/features/tasks/hooks/useTaskMutations'
 import { useTasksQuery } from '@/features/tasks/hooks/useTasksQuery'
 import type { Task } from '@/features/tasks/types/task'
 
-type SortField = 'title' | 'status' | 'priority' | 'createdAt'
+type SortField = 'title' | 'status' | 'priority' | 'dueDate' | 'createdAt'
 type SortDir = 'asc' | 'desc'
 
 const PRIORITY_ORDER: Record<Task['priority'], number> = {
-  high: 0,
-  medium: 1,
-  low: 2,
+  urgent: 0,
+  high: 1,
+  medium: 2,
+  low: 3,
 }
 const STATUS_ORDER: Record<Task['status'], number> = {
   todo: 0,
   in_progress: 1,
-  done: 2,
+  in_review: 2,
+  done: 3,
 }
 
 function sortTasks(tasks: Task[], field: SortField, dir: SortDir): Task[] {
@@ -45,6 +48,9 @@ function sortTasks(tasks: Task[], field: SortField, dir: SortDir): Task[] {
       case 'status':
         cmp = STATUS_ORDER[a.status] - STATUS_ORDER[b.status]
         break
+      case 'dueDate':
+        cmp = a.dueDate.localeCompare(b.dueDate)
+        break
       case 'createdAt':
         cmp = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         break
@@ -56,14 +62,17 @@ function sortTasks(tasks: Task[], field: SortField, dir: SortDir): Task[] {
 const STATUS_STYLES: Record<Task['status'], string> = {
   todo: 'bg-slate-100 text-slate-600',
   in_progress: 'bg-blue-100 text-blue-700',
+  in_review: 'bg-yellow-100 text-yellow-700',
   done: 'bg-emerald-100 text-emerald-700',
 }
 const STATUS_LABELS: Record<Task['status'], string> = {
   todo: 'To Do',
   in_progress: 'In Progress',
+  in_review: 'In Review',
   done: 'Done',
 }
 const PRIORITY_STYLES: Record<Task['priority'], string> = {
+  urgent: 'bg-red-600 text-white',
   high: 'bg-red-100 text-red-700',
   medium: 'bg-amber-100 text-amber-700',
   low: 'bg-emerald-100 text-emerald-700',
@@ -173,7 +182,7 @@ export function ListPage() {
 
       <div className="flex-1 overflow-hidden flex flex-col bg-white rounded-xl border border-gray-200 min-h-0">
         {/* Column headers */}
-        <div className="grid grid-cols-[1fr_128px_112px_112px_80px] gap-4 px-4 py-3 border-b border-gray-100 shrink-0 bg-gray-50 rounded-t-xl">
+        <div className="grid grid-cols-[1fr_128px_112px_112px_112px_80px] gap-4 px-4 py-3 border-b border-gray-100 shrink-0 bg-gray-50 rounded-t-xl">
           <button
             type="button"
             className={colClass}
@@ -200,6 +209,15 @@ export function ListPage() {
           >
             Priority
             <SortIndicator field="priority" active={sortField} dir={sortDir} />
+          </button>
+          <button
+            type="button"
+            className={colClass}
+            onClick={() => handleSort('dueDate')}
+            aria-sort={sortField === 'dueDate' ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}
+          >
+            Due Date
+            <SortIndicator field="dueDate" active={sortField} dir={sortDir} />
           </button>
           <button
             type="button"
@@ -279,7 +297,7 @@ export function ListPage() {
                       height: `${ROW_HEIGHT}px`,
                       transform: `translateY(${virtualRow.start}px)`,
                     }}
-                    className="grid grid-cols-[1fr_128px_112px_112px_80px] gap-4 px-4 items-center border-b border-gray-50 hover:bg-gray-50/60 transition-colors group"
+                    className="grid grid-cols-[1fr_128px_112px_112px_112px_80px] gap-4 px-4 items-center border-b border-gray-50 hover:bg-gray-50/60 transition-colors group"
                   >
                     <button
                       type="button"
@@ -297,6 +315,9 @@ export function ListPage() {
                       className={`inline-flex text-xs font-medium px-2 py-0.5 rounded-full w-fit ${PRIORITY_STYLES[task.priority]}`}
                     >
                       {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {task.dueDate ? formatDate(task.dueDate) : '—'}
                     </span>
                     <span className="text-xs text-gray-400">
                       {new Date(task.createdAt).toLocaleDateString('en-US', {

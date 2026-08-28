@@ -44,10 +44,11 @@ export function TaskFilters() {
 					<SelectValue placeholder='All statuses' />
 				</SelectTrigger>
 				<SelectContent>
-					<SelectItem value='all'>All statuses</SelectItem>
-					<SelectItem value='todo'>To Do</SelectItem>
-					<SelectItem value='in_progress'>In Progress</SelectItem>
-					<SelectItem value='done'>Done</SelectItem>
+          <SelectItem value='all'>All statuses</SelectItem>
+          <SelectItem value='todo'>To Do</SelectItem>
+          <SelectItem value='in_progress'>In Progress</SelectItem>
+          <SelectItem value='in_review'>In Review</SelectItem>
+          <SelectItem value='done'>Done</SelectItem>
 				</SelectContent>
 			</Select>
 
@@ -61,10 +62,11 @@ export function TaskFilters() {
 					<SelectValue placeholder='All priorities' />
 				</SelectTrigger>
 				<SelectContent>
-					<SelectItem value='all'>All priorities</SelectItem>
-					<SelectItem value='low'>Low</SelectItem>
-					<SelectItem value='medium'>Medium</SelectItem>
-					<SelectItem value='high'>High</SelectItem>
+          <SelectItem value='all'>All priorities</SelectItem>
+          <SelectItem value='low'>Low</SelectItem>
+          <SelectItem value='medium'>Medium</SelectItem>
+          <SelectItem value='high'>High</SelectItem>
+          <SelectItem value='urgent'>Urgent</SelectItem>
 				</SelectContent>
 			</Select>
 

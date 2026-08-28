@@ -30,7 +30,7 @@ import { useTaskMutations } from '../hooks/useTaskMutations'
 import { TaskCardOverlay } from './TaskCard'
 import { TaskColumn } from './TaskColumn'
 
-const COLUMNS: TaskStatus[] = ['todo', 'in_progress', 'done']
+const COLUMNS: TaskStatus[] = ['todo', 'in_progress', 'in_review', 'done']
 const VALID_STATUSES = new Set<string>(COLUMNS)
 
 interface TaskBoardProps {

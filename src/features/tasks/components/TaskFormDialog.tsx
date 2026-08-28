@@ -45,6 +45,7 @@ export function TaskFormDialog({
 			description: task?.description ?? "",
 			status: task?.status ?? defaultStatus,
 			priority: task?.priority ?? "medium",
+			dueDate: task?.dueDate ?? "",
 		},
 	})
 
@@ -138,6 +139,7 @@ export function TaskFormDialog({
 										<SelectContent>
 											<SelectItem value='todo'>To Do</SelectItem>
 											<SelectItem value='in_progress'>In Progress</SelectItem>
+											<SelectItem value='in_review'>In Review</SelectItem>
 											<SelectItem value='done'>Done</SelectItem>
 										</SelectContent>
 									</Select>
@@ -159,14 +161,38 @@ export function TaskFormDialog({
 											<SelectItem value='low'>Low</SelectItem>
 											<SelectItem value='medium'>Medium</SelectItem>
 											<SelectItem value='high'>High</SelectItem>
+											<SelectItem value='urgent'>Urgent</SelectItem>
 										</SelectContent>
 									</Select>
 								)}
 							/>
 						</div>
-					</div>
+				</div>
 
-					<DialogFooter>
+				<div className='space-y-1.5'>
+					<Label htmlFor='task-due-date'>
+						Due Date{' '}
+						<span className='text-red-500' aria-hidden='true'>
+							*
+						</span>
+					</Label>
+					<Input
+						id='task-due-date'
+						type='date'
+						aria-invalid={!!form.formState.errors.dueDate}
+						aria-describedby={
+							form.formState.errors.dueDate ? 'due-date-error' : undefined
+						}
+						{...form.register('dueDate')}
+					/>
+					{form.formState.errors.dueDate && (
+						<p id='due-date-error' className='text-xs text-red-500' role='alert'>
+							{form.formState.errors.dueDate.message}
+						</p>
+					)}
+				</div>
+
+				<DialogFooter>
 						<Button
 							type='button'
 							variant='outline'

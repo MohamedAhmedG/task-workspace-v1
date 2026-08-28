@@ -6,6 +6,7 @@ import { TaskCard } from './TaskCard'
 const COLUMN_CONFIG = {
   todo: { label: 'To Do', dotClass: 'bg-slate-400' },
   in_progress: { label: 'In Progress', dotClass: 'bg-blue-400' },
+  in_review: { label: 'In Review', dotClass: 'bg-yellow-400' },
   done: { label: 'Done', dotClass: 'bg-emerald-400' },
 } satisfies Record<TaskStatus, { label: string; dotClass: string }>
 
