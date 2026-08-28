@@ -1,18 +1,11 @@
 import { useSearchParams } from 'react-router-dom'
 import type { TaskPriority, TaskStatus } from '../types/task'
-
-export interface TaskFilterValues {
-  q: string
-  status: TaskStatus | ''
-  priority: TaskPriority | ''
-  from: string
-  to: string
-}
+import type { TaskFilters } from './useTasksQuery'
 
 export function useTaskFilters() {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const filters: TaskFilterValues = {
+  const filters: TaskFilters = {
     q: searchParams.get('q') ?? '',
     status: (searchParams.get('status') as TaskStatus) ?? '',
     priority: (searchParams.get('priority') as TaskPriority) ?? '',
@@ -20,7 +13,7 @@ export function useTaskFilters() {
     to: searchParams.get('to') ?? '',
   }
 
-  const setFilter = (key: keyof TaskFilterValues, value: string) => {
+  const setFilter = (key: keyof TaskFilters, value: string) => {
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev)

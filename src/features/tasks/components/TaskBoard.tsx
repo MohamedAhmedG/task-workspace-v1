@@ -9,7 +9,7 @@ import {
 	type DragEndEvent,
 	type DragStartEvent,
 } from "@dnd-kit/core"
-import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable"
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable"
 import { useQueryClient } from "@tanstack/react-query"
 import { useMemo, useState } from "react"
 import {
@@ -79,17 +79,6 @@ export function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
 
 		if (targetStatus !== dragged.status) {
 			update.mutate({ id: dragged.id, data: { status: targetStatus } })
-		} else {
-			const columnTasks = allCached.filter((t) => t.status === dragged.status)
-			const oldIndex = columnTasks.findIndex((t) => t.id === active.id)
-			const newIndex = columnTasks.findIndex((t) => t.id === over.id)
-			if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return
-			const reordered = arrayMove(columnTasks, oldIndex, newIndex)
-			queryClient.setQueryData<Task[]>(["tasks"], (old) => {
-				if (!old) return []
-				const others = old.filter((t) => t.status !== dragged.status)
-				return [...others, ...reordered]
-			})
 		}
 	}
 

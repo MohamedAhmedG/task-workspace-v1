@@ -15,7 +15,7 @@ export function TaskFilters() {
 	const { filters, setFilter, clearFilters, hasActiveFilters } =
 		useTaskFilters()
 
-	const [inputValue, setInputValue] = useState(filters.q)
+	const [inputValue, setInputValue] = useState(filters.q ?? '')
 
 	const setFilterRef = useRef(setFilter)
 	const filtersQRef = useRef(filters.q)
