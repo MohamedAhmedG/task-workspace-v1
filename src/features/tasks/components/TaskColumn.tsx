@@ -30,7 +30,7 @@ export function TaskColumn({
   const { setNodeRef, isOver } = useDroppable({ id: status })
 
   return (
-    <div className="flex-shrink-0 w-[300px] flex flex-col bg-gray-50 rounded-xl border border-gray-200">
+    <div className="shrink-0 w-75 flex flex-col bg-gray-50 rounded-xl border border-gray-200">
       <div className="px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className={`w-2 h-2 rounded-full ${config.dotClass}`} />
@@ -67,7 +67,7 @@ export function TaskColumn({
       <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
         <div
           ref={setNodeRef}
-          className={`flex-1 p-3 space-y-2.5 min-h-[120px] rounded-b-xl transition-colors ${
+          className={`flex-1 p-3 space-y-2.5 min-h-30 rounded-b-xl transition-colors ${
             isOver ? 'bg-blue-50/60' : ''
           }`}
         >

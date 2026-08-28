@@ -41,7 +41,7 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
         ref={setNodeRef}
         style={style}
         aria-hidden="true"
-        className="h-[100px] rounded-lg border-2 border-dashed border-blue-200 bg-blue-50/40"
+        className="h-25 rounded-lg border-2 border-dashed border-blue-200 bg-blue-50/40"
       />
     )
   }
