@@ -15,7 +15,8 @@ export function TaskFilters() {
 	const { filters, setFilter, clearFilters, hasActiveFilters } =
 		useTaskFilters()
 
-	const [inputValue, setInputValue] = useState(filters.q ?? '')
+	const [inputValue, setInputValue] = useState(filters.q ?? "")
+	const [prevUrlQ, setPrevUrlQ] = useState(filters.q)
 
 	const setFilterRef = useRef(setFilter)
 	const filtersQRef = useRef(filters.q)
@@ -23,6 +24,13 @@ export function TaskFilters() {
 		setFilterRef.current = setFilter
 		filtersQRef.current = filters.q
 	})
+
+	if (prevUrlQ !== filters.q) {
+		setPrevUrlQ(filters.q)
+		if (inputValue !== (filters.q ?? "")) {
+			setInputValue(filters.q ?? "")
+		}
+	}
 
 	useEffect(() => {
 		const id = setTimeout(() => {
