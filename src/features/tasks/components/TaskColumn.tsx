@@ -35,9 +35,9 @@ export function TaskColumn({
       <div className="px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className={`w-2 h-2 rounded-full ${config.dotClass}`} />
-          <span className="text-sm font-medium text-gray-900">
+          <h2 className="text-sm font-medium text-gray-900">
             {config.label}
-          </span>
+          </h2>
           <span className="text-xs text-gray-500 bg-gray-200 rounded-full px-2 py-0.5 font-medium">
             {tasks.length}
           </span>
@@ -68,6 +68,8 @@ export function TaskColumn({
       <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
         <div
           ref={setNodeRef}
+          role="list"
+          aria-label={`${config.label} tasks`}
           className={`flex-1 p-3 space-y-2.5 min-h-30 rounded-b-xl transition-colors ${
             isOver ? 'bg-blue-50/60' : ''
           }`}

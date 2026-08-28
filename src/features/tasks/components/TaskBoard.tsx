@@ -1,6 +1,7 @@
 import {
 	DndContext,
 	DragOverlay,
+	KeyboardSensor,
 	PointerSensor,
 	closestCorners,
 	useSensor,
@@ -8,7 +9,7 @@ import {
 	type DragEndEvent,
 	type DragStartEvent,
 } from "@dnd-kit/core"
-import { arrayMove } from "@dnd-kit/sortable"
+import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import {
@@ -48,6 +49,7 @@ export function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
 	)
 
 	const handleDragStart = ({ active }: DragStartEvent) => {

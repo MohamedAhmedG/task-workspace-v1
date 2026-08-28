@@ -164,7 +164,7 @@ export function ListPage() {
 		"flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wide select-none cursor-pointer hover:text-gray-800 transition-colors"
 
 	return (
-		<div className='h-full flex flex-col p-6 gap-4 overflow-hidden'>
+		<div className='h-full flex flex-col p-4 sm:p-6 gap-4 overflow-hidden'>
 			<div className='flex items-center justify-between shrink-0'>
 				<div>
 					<h1 className='text-xl font-semibold text-gray-900'>List</h1>
@@ -204,7 +204,9 @@ export function ListPage() {
 				<TaskFilters />
 			</div>
 
-			<div className='flex-1 overflow-hidden flex flex-col bg-white rounded-xl border border-gray-200 min-h-0'>
+			<div className='flex-1 overflow-hidden min-h-0'>
+				<div className='h-full overflow-x-auto'>
+				<div className='flex flex-col bg-white rounded-xl border border-gray-200 h-full min-w-180'>
 				<div className='grid grid-cols-[1fr_128px_112px_112px_112px_80px] gap-4 px-4 py-3 border-b border-gray-100 shrink-0 bg-gray-50 rounded-t-xl'>
 					<button
 						type='button'
@@ -381,7 +383,7 @@ export function ListPage() {
 												day: "numeric",
 											})}
 										</span>
-										<div className='flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity'>
+										<div className='flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity'>
 											<button
 												type='button'
 												aria-label={`Edit "${task.title}"`}
@@ -404,10 +406,12 @@ export function ListPage() {
 							})}
 						</div>
 					</div>
-				)}
+			)}
+		</div>
+				</div>
 			</div>
 
-			<TaskFormDialog
+		<TaskFormDialog
 				open={formOpen}
 				onClose={handleClose}
 				task={editingTask}

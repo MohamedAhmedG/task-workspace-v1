@@ -28,7 +28,7 @@ export function BoardPage() {
   }
 
   return (
-    <div className="h-full flex flex-col p-6 gap-4 overflow-hidden">
+    <div className="h-full flex flex-col p-4 sm:p-6 gap-4 overflow-hidden">
       <div className="flex items-center justify-between shrink-0">
         <div>
           <h1 className="text-xl font-semibold text-gray-900">Board</h1>

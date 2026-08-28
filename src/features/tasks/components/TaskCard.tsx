@@ -1,4 +1,4 @@
-import { Calendar } from 'lucide-react'
+import { Calendar, GripVertical } from 'lucide-react'
 import { CSS } from '@dnd-kit/utilities'
 import { useSortable } from '@dnd-kit/sortable'
 import { formatDate } from '@/lib/utils'
@@ -29,6 +29,7 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
     attributes,
     listeners,
     setNodeRef,
+    setActivatorNodeRef,
     transform,
     transition,
     isDragging,
@@ -54,11 +55,9 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
     <div
       ref={setNodeRef}
       style={style}
-      aria-label={task.title}
-      className="group bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md hover:border-gray-300 transition-all cursor-grab active:cursor-grabbing"
+      role="listitem"
+      className="group bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md hover:border-gray-300 transition-all"
       onClick={() => onEdit(task)}
-      {...attributes}
-      {...listeners}
     >
       <div className="flex items-start justify-between gap-2 mb-2">
         <span
@@ -66,36 +65,60 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
         >
           {PRIORITY_LABELS[task.priority]}
         </span>
-        <button
-          type="button"
-          aria-label={`Delete "${task.title}"`}
-          className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all shrink-0 -mt-0.5 -mr-0.5 p-0.5 rounded"
-          onClick={(e) => {
-            e.stopPropagation()
-            onDelete(task.id)
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
+
+        <div className="flex items-center gap-0.5 -mt-0.5 -mr-0.5 shrink-0">
+          <button
+            type="button"
+            ref={setActivatorNodeRef}
+            aria-label={`Drag "${task.title}"`}
+            className="p-0.5 text-gray-300 hover:text-gray-500 rounded opacity-0 group-hover:opacity-100 focus-visible:opacity-100 cursor-grab active:cursor-grabbing touch-none transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1"
+            onClick={(e) => e.stopPropagation()}
+            {...attributes}
+            {...listeners}
           >
-            <path d="M3 6h18" />
-            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-          </svg>
-        </button>
+            <GripVertical size={14} aria-hidden="true" />
+          </button>
+
+          <button
+            type="button"
+            aria-label={`Delete "${task.title}"`}
+            className="p-0.5 text-gray-400 hover:text-red-500 rounded opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1"
+            onClick={(e) => {
+              e.stopPropagation()
+              onDelete(task.id)
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M3 6h18" />
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <h3 className="font-medium text-gray-900 text-sm leading-snug mb-1.5 line-clamp-2">
-        {task.title}
+      <h3 className="font-medium text-gray-900 text-sm leading-snug mb-1.5">
+        <button
+          type="button"
+          className="text-left w-full line-clamp-2 hover:text-blue-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 rounded-sm"
+          onClick={(e) => {
+            e.stopPropagation()
+            onEdit(task)
+          }}
+        >
+          {task.title}
+        </button>
       </h3>
 
       {task.description && (
