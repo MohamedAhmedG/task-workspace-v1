@@ -1,17 +1,26 @@
 import { useState } from 'react'
 import { TaskBoard } from '@/features/tasks/components/TaskBoard'
+import { TaskFormDialog } from '@/features/tasks/components/TaskFormDialog'
 import type { Task, TaskStatus } from '@/features/tasks/types/task'
 
 export function BoardPage() {
-  const [_editingTask, setEditingTask] = useState<Task | null>(null)
-  const [_defaultStatus, setDefaultStatus] = useState<TaskStatus>('todo')
+  const [formOpen, setFormOpen] = useState(false)
+  const [editingTask, setEditingTask] = useState<Task | null>(null)
+  const [defaultStatus, setDefaultStatus] = useState<TaskStatus>('todo')
 
   const handleEdit = (task: Task) => {
     setEditingTask(task)
+    setFormOpen(true)
   }
 
   const handleAddTask = (status: TaskStatus) => {
+    setEditingTask(null)
     setDefaultStatus(status)
+    setFormOpen(true)
+  }
+
+  const handleClose = () => {
+    setFormOpen(false)
     setEditingTask(null)
   }
 
@@ -21,7 +30,7 @@ export function BoardPage() {
         <div>
           <h1 className="text-xl font-semibold text-gray-900">Board</h1>
           <p className="text-sm text-gray-500 mt-0.5">
-            Drag cards between columns to update status
+            Click any card to edit, drag to reorder
           </p>
         </div>
         <button
@@ -53,6 +62,13 @@ export function BoardPage() {
           onAddTask={handleAddTask}
         />
       </div>
+
+      <TaskFormDialog
+        open={formOpen}
+        onClose={handleClose}
+        task={editingTask}
+        defaultStatus={defaultStatus}
+      />
     </div>
   )
 }

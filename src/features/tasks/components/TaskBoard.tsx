@@ -1,3 +1,14 @@
+import { useState } from 'react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import type { Task, TaskStatus } from '../types/task'
 import type { TaskFilters } from '../hooks/useTasksQuery'
 import { useTasksQuery } from '../hooks/useTasksQuery'
@@ -15,6 +26,7 @@ interface TaskBoardProps {
 export function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
   const { tasks, isLoading, isError } = useTasksQuery(filters)
   const { remove } = useTaskMutations()
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   if (isLoading) {
     return (
@@ -44,23 +56,57 @@ export function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
   if (isError) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-red-600">Failed to load tasks. Please refresh.</p>
+        <p className="text-sm text-red-600">
+          Failed to load tasks. Please refresh.
+        </p>
       </div>
     )
   }
 
   return (
-    <div className="flex gap-4 h-full overflow-x-auto pb-2">
-      {COLUMNS.map((status) => (
-        <TaskColumn
-          key={status}
-          status={status}
-          tasks={tasks.filter((t) => t.status === status)}
-          onEdit={onEdit}
-          onDelete={(id) => remove.mutate(id)}
-          onAddTask={onAddTask}
-        />
-      ))}
-    </div>
+    <>
+      <div className="flex gap-4 h-full overflow-x-auto pb-2">
+        {COLUMNS.map((status) => (
+          <TaskColumn
+            key={status}
+            status={status}
+            tasks={tasks.filter((t) => t.status === status)}
+            onEdit={onEdit}
+            onDelete={setDeletingId}
+            onAddTask={onAddTask}
+          />
+        ))}
+      </div>
+
+      <AlertDialog
+        open={deletingId !== null}
+        onOpenChange={(v) => {
+          if (!v) setDeletingId(null)
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete task?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700 focus-visible:ring-red-600"
+              onClick={() => {
+                if (deletingId) {
+                  remove.mutate(deletingId)
+                  setDeletingId(null)
+                }
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }
