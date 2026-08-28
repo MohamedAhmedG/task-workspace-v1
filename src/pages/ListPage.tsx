@@ -6,7 +6,7 @@ import {
 	Pencil,
 	Trash2,
 } from "lucide-react"
-import { useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { formatDate } from "@/lib/utils"
 import {
 	AlertDialog,
@@ -131,7 +131,10 @@ export function ListPage() {
 	const [editingTask, setEditingTask] = useState<Task | null>(null)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 
-	const sortedTasks = sortTasks(tasks, sortField, sortDir)
+	const sortedTasks = useMemo(
+		() => sortTasks(tasks, sortField, sortDir),
+		[tasks, sortField, sortDir],
+	)
 
 	const parentRef = useRef<HTMLDivElement>(null)
 	const virtualizer = useVirtualizer({
@@ -206,212 +209,233 @@ export function ListPage() {
 
 			<div className='flex-1 overflow-hidden min-h-0'>
 				<div className='h-full overflow-x-auto'>
-				<div className='flex flex-col bg-white rounded-xl border border-gray-200 h-full min-w-180'>
-				<div className='grid grid-cols-[1fr_128px_112px_112px_112px_80px] gap-4 px-4 py-3 border-b border-gray-100 shrink-0 bg-gray-50 rounded-t-xl'>
-					<button
-						type='button'
-						className={colClass}
-						onClick={() => handleSort("title")}
-						aria-sort={
-							sortField === "title"
-								? sortDir === "asc"
-									? "ascending"
-									: "descending"
-								: "none"
-						}
-					>
-						Task
-						<SortIndicator field='title' active={sortField} dir={sortDir} />
-					</button>
-					<button
-						type='button'
-						className={colClass}
-						onClick={() => handleSort("status")}
-						aria-sort={
-							sortField === "status"
-								? sortDir === "asc"
-									? "ascending"
-									: "descending"
-								: "none"
-						}
-					>
-						Status
-						<SortIndicator field='status' active={sortField} dir={sortDir} />
-					</button>
-					<button
-						type='button'
-						className={colClass}
-						onClick={() => handleSort("priority")}
-						aria-sort={
-							sortField === "priority"
-								? sortDir === "asc"
-									? "ascending"
-									: "descending"
-								: "none"
-						}
-					>
-						Priority
-						<SortIndicator field='priority' active={sortField} dir={sortDir} />
-					</button>
-					<button
-						type='button'
-						className={colClass}
-						onClick={() => handleSort("dueDate")}
-						aria-sort={
-							sortField === "dueDate"
-								? sortDir === "asc"
-									? "ascending"
-									: "descending"
-								: "none"
-						}
-					>
-						Due Date
-						<SortIndicator field='dueDate' active={sortField} dir={sortDir} />
-					</button>
-					<button
-						type='button'
-						className={colClass}
-						onClick={() => handleSort("createdAt")}
-						aria-sort={
-							sortField === "createdAt"
-								? sortDir === "asc"
-									? "ascending"
-									: "descending"
-								: "none"
-						}
-					>
-						Created
-						<SortIndicator field='createdAt' active={sortField} dir={sortDir} />
-					</button>
-					<span className='text-xs font-medium text-gray-500 uppercase tracking-wide'>
-						Actions
-					</span>
-				</div>
-
-				{isLoading ? (
-					<div className='flex-1 overflow-y-auto divide-y divide-gray-50'>
-						{Array.from({ length: 8 }, (_, i) => (
-							<div
-								key={i}
-								className='grid grid-cols-[1fr_128px_112px_112px_112px_80px] gap-4 px-4 py-4 items-center'
+					<div className='flex flex-col bg-white rounded-xl border border-gray-200 h-full min-w-180'>
+						<div className='grid grid-cols-[1fr_128px_112px_112px_112px_80px] gap-4 px-4 py-3 border-b border-gray-100 shrink-0 bg-gray-50 rounded-t-xl'>
+							<button
+								type='button'
+								className={colClass}
+								onClick={() => handleSort("title")}
+								aria-sort={
+									sortField === "title"
+										? sortDir === "asc"
+											? "ascending"
+											: "descending"
+										: "none"
+								}
 							>
-								<Skeleton className='h-4 w-2/3' />
-								<Skeleton className='h-5 w-20 rounded-full' />
-								<Skeleton className='h-5 w-14 rounded-full' />
-								<Skeleton className='h-4 w-16' />
-								<Skeleton className='h-4 w-16' />
-								<div className='flex gap-1'>
-									<Skeleton className='h-6 w-6 rounded' />
-									<Skeleton className='h-6 w-6 rounded' />
-								</div>
-							</div>
-						))}
-					</div>
-				) : isError ? (
-					<div className='flex-1 flex flex-col items-center justify-center gap-3'>
-						<p className='text-sm text-red-600'>Failed to load tasks.</p>
-						<button
-							type='button'
-							onClick={() => refetch()}
-							className='text-sm font-medium text-blue-600 hover:text-blue-800 underline underline-offset-2'
-						>
-							Retry
-						</button>
-					</div>
-				) : sortedTasks.length === 0 ? (
-					<div className='flex-1 flex flex-col items-center justify-center gap-2 text-center py-16'>
-						<p className='text-sm font-medium text-gray-600'>No tasks found</p>
-						<p className='text-xs text-gray-400'>
-							{filters.q || filters.status || filters.priority
-								? "Try adjusting your filters"
-								: "Create your first task to get started"}
-						</p>
-					</div>
-				) : (
-					<div
-						ref={parentRef}
-						className='flex-1 overflow-y-auto'
-						role='list'
-						aria-label='Task list'
-					>
-						<div
-							style={{ height: `${virtualizer.getTotalSize()}px` }}
-							className='relative'
-						>
-							{virtualizer.getVirtualItems().map((virtualRow) => {
-								const task = sortedTasks[virtualRow.index]!
-								return (
+								Task
+								<SortIndicator field='title' active={sortField} dir={sortDir} />
+							</button>
+							<button
+								type='button'
+								className={colClass}
+								onClick={() => handleSort("status")}
+								aria-sort={
+									sortField === "status"
+										? sortDir === "asc"
+											? "ascending"
+											: "descending"
+										: "none"
+								}
+							>
+								Status
+								<SortIndicator
+									field='status'
+									active={sortField}
+									dir={sortDir}
+								/>
+							</button>
+							<button
+								type='button'
+								className={colClass}
+								onClick={() => handleSort("priority")}
+								aria-sort={
+									sortField === "priority"
+										? sortDir === "asc"
+											? "ascending"
+											: "descending"
+										: "none"
+								}
+							>
+								Priority
+								<SortIndicator
+									field='priority'
+									active={sortField}
+									dir={sortDir}
+								/>
+							</button>
+							<button
+								type='button'
+								className={colClass}
+								onClick={() => handleSort("dueDate")}
+								aria-sort={
+									sortField === "dueDate"
+										? sortDir === "asc"
+											? "ascending"
+											: "descending"
+										: "none"
+								}
+							>
+								Due Date
+								<SortIndicator
+									field='dueDate'
+									active={sortField}
+									dir={sortDir}
+								/>
+							</button>
+							<button
+								type='button'
+								className={colClass}
+								onClick={() => handleSort("createdAt")}
+								aria-sort={
+									sortField === "createdAt"
+										? sortDir === "asc"
+											? "ascending"
+											: "descending"
+										: "none"
+								}
+							>
+								Created
+								<SortIndicator
+									field='createdAt'
+									active={sortField}
+									dir={sortDir}
+								/>
+							</button>
+							<span className='text-xs font-medium text-gray-500 uppercase tracking-wide'>
+								Actions
+							</span>
+						</div>
+
+						{isLoading ? (
+							<div className='flex-1 overflow-y-auto divide-y divide-gray-50'>
+								{Array.from({ length: 8 }, (_, i) => (
 									<div
-										key={task.id}
-										role='listitem'
-										data-index={virtualRow.index}
-										ref={virtualizer.measureElement}
-										style={{
-											position: "absolute",
-											top: 0,
-											left: 0,
-											width: "100%",
-											height: `${ROW_HEIGHT}px`,
-											transform: `translateY(${virtualRow.start}px)`,
-										}}
-										className='grid grid-cols-[1fr_128px_112px_112px_112px_80px] gap-4 px-4 items-center border-b border-gray-50 hover:bg-gray-50/60 transition-colors group'
+										key={i}
+										className='grid grid-cols-[1fr_128px_112px_112px_112px_80px] gap-4 px-4 py-4 items-center'
 									>
-										<button
-											type='button'
-											className='text-left text-sm font-medium text-gray-900 truncate hover:text-blue-600 transition-colors py-4'
-											onClick={() => handleEdit(task)}
-										>
-											{task.title}
-										</button>
-										<span
-											className={`inline-flex text-xs font-medium px-2 py-0.5 rounded-full w-fit ${STATUS_STYLES[task.status]}`}
-										>
-											{STATUS_LABELS[task.status]}
-										</span>
-										<span
-											className={`inline-flex text-xs font-medium px-2 py-0.5 rounded-full w-fit ${PRIORITY_STYLES[task.priority]}`}
-										>
-											{task.priority.charAt(0).toUpperCase() +
-												task.priority.slice(1)}
-										</span>
-										<span className='text-xs text-gray-500'>
-											{task.dueDate ? formatDate(task.dueDate) : "—"}
-										</span>
-										<span className='text-xs text-gray-400'>
-											{new Date(task.createdAt).toLocaleDateString("en-US", {
-												month: "short",
-												day: "numeric",
-											})}
-										</span>
-										<div className='flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity'>
-											<button
-												type='button'
-												aria-label={`Edit "${task.title}"`}
-												className='p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors'
-												onClick={() => handleEdit(task)}
-											>
-												<Pencil size={13} aria-hidden='true' />
-											</button>
-											<button
-												type='button'
-												aria-label={`Delete "${task.title}"`}
-												className='p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors'
-												onClick={() => setDeletingId(task.id)}
-											>
-												<Trash2 size={13} aria-hidden='true' />
-											</button>
+										<Skeleton className='h-4 w-2/3' />
+										<Skeleton className='h-5 w-20 rounded-full' />
+										<Skeleton className='h-5 w-14 rounded-full' />
+										<Skeleton className='h-4 w-16' />
+										<Skeleton className='h-4 w-16' />
+										<div className='flex gap-1'>
+											<Skeleton className='h-6 w-6 rounded' />
+											<Skeleton className='h-6 w-6 rounded' />
 										</div>
 									</div>
-								)
-							})}
-						</div>
+								))}
+							</div>
+						) : isError ? (
+							<div className='flex-1 flex flex-col items-center justify-center gap-3'>
+								<p className='text-sm text-red-600'>Failed to load tasks.</p>
+								<button
+									type='button'
+									onClick={() => refetch()}
+									className='text-sm font-medium text-blue-600 hover:text-blue-800 underline underline-offset-2'
+								>
+									Retry
+								</button>
+							</div>
+						) : sortedTasks.length === 0 ? (
+							<div className='flex-1 flex flex-col items-center justify-center gap-2 text-center py-16'>
+								<p className='text-sm font-medium text-gray-600'>
+									No tasks found
+								</p>
+								<p className='text-xs text-gray-400'>
+									{filters.q || filters.status || filters.priority
+										? "Try adjusting your filters"
+										: "Create your first task to get started"}
+								</p>
+							</div>
+						) : (
+							<div
+								ref={parentRef}
+								className='flex-1 overflow-y-auto'
+								role='list'
+								aria-label='Task list'
+							>
+								<div
+									style={{ height: `${virtualizer.getTotalSize()}px` }}
+									className='relative'
+								>
+									{virtualizer.getVirtualItems().map((virtualRow) => {
+										const task = sortedTasks[virtualRow.index]!
+										return (
+											<div
+												key={task.id}
+												role='listitem'
+												data-index={virtualRow.index}
+												ref={virtualizer.measureElement}
+												style={{
+													position: "absolute",
+													top: 0,
+													left: 0,
+													width: "100%",
+													height: `${ROW_HEIGHT}px`,
+													transform: `translateY(${virtualRow.start}px)`,
+												}}
+												className='grid grid-cols-[1fr_128px_112px_112px_112px_80px] gap-4 px-4 items-center border-b border-gray-50 hover:bg-gray-50/60 transition-colors group'
+											>
+												<button
+													type='button'
+													className='text-left text-sm font-medium text-gray-900 truncate hover:text-blue-600 transition-colors py-4'
+													onClick={() => handleEdit(task)}
+												>
+													{task.title}
+												</button>
+												<span
+													className={`inline-flex text-xs font-medium px-2 py-0.5 rounded-full w-fit ${STATUS_STYLES[task.status]}`}
+												>
+													{STATUS_LABELS[task.status]}
+												</span>
+												<span
+													className={`inline-flex text-xs font-medium px-2 py-0.5 rounded-full w-fit ${PRIORITY_STYLES[task.priority]}`}
+												>
+													{task.priority.charAt(0).toUpperCase() +
+														task.priority.slice(1)}
+												</span>
+												<span className='text-xs text-gray-500'>
+													{task.dueDate ? formatDate(task.dueDate) : "—"}
+												</span>
+												<span className='text-xs text-gray-400'>
+													{new Date(task.createdAt).toLocaleDateString(
+														"en-US",
+														{
+															month: "short",
+															day: "numeric",
+														},
+													)}
+												</span>
+												<div className='flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity'>
+													<button
+														type='button'
+														aria-label={`Edit "${task.title}"`}
+														className='p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors'
+														onClick={() => handleEdit(task)}
+													>
+														<Pencil size={13} aria-hidden='true' />
+													</button>
+													<button
+														type='button'
+														aria-label={`Delete "${task.title}"`}
+														className='p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors'
+														onClick={() => setDeletingId(task.id)}
+													>
+														<Trash2 size={13} aria-hidden='true' />
+													</button>
+												</div>
+											</div>
+										)
+									})}
+								</div>
+							</div>
+						)}
 					</div>
-			)}
-		</div>
 				</div>
 			</div>
 
-		<TaskFormDialog
+			<TaskFormDialog
 				open={formOpen}
 				onClose={handleClose}
 				task={editingTask}

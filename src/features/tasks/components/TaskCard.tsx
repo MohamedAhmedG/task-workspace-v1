@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Calendar, GripVertical } from 'lucide-react'
 import { CSS } from '@dnd-kit/utilities'
 import { useSortable } from '@dnd-kit/sortable'
@@ -24,7 +25,7 @@ interface TaskCardProps {
   onDelete: (id: string) => void
 }
 
-export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
+export const TaskCard = memo(function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
   const {
     attributes,
     listeners,
@@ -135,7 +136,7 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
       )}
     </div>
   )
-}
+})
 
 export function TaskCardOverlay({ task }: { task: Task }) {
   return (

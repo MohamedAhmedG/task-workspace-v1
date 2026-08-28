@@ -11,7 +11,7 @@ import {
 } from "@dnd-kit/core"
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable"
 import { useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -46,6 +46,14 @@ export function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
 
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 	const [activeTask, setActiveTask] = useState<Task | null>(null)
+
+	const tasksByStatus = useMemo(() => {
+		const groups = new Map<TaskStatus, Task[]>(COLUMNS.map((s) => [s, []]))
+		for (const task of tasks) {
+			groups.get(task.status)?.push(task)
+		}
+		return groups
+	}, [tasks])
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -145,7 +153,7 @@ export function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
 						<TaskColumn
 							key={status}
 							status={status}
-							tasks={tasks.filter((t) => t.status === status)}
+							tasks={tasksByStatus.get(status) ?? []}
 							onEdit={onEdit}
 							onDelete={setDeletingId}
 							onAddTask={onAddTask}

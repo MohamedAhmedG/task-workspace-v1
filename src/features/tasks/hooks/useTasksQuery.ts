@@ -1,37 +1,41 @@
-import { useQuery } from '@tanstack/react-query'
-import { getTasks } from '../api/tasks'
-import type { TaskPriority, TaskStatus } from '../types/task'
+import { useMemo } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { getTasks } from "../api/tasks"
+import type { TaskPriority, TaskStatus } from "../types/task"
 
 export interface TaskFilters {
-  status?: TaskStatus | ''
-  priority?: TaskPriority | ''
-  q?: string
-  from?: string
-  to?: string
+	status?: TaskStatus | ""
+	priority?: TaskPriority | ""
+	q?: string
+	from?: string
+	to?: string
 }
 
 export function useTasksQuery(filters: TaskFilters = {}) {
-  const query = useQuery({
-    queryKey: ['tasks'],
-    queryFn: getTasks,
-  })
+	const { status = "", priority = "", q = "", from = "", to = "" } = filters
 
-  const allTasks = query.data ?? []
+	const query = useQuery({
+		queryKey: ["tasks"],
+		queryFn: getTasks,
+	})
 
-  const tasks = allTasks.filter((task) => {
-    if (filters.status && task.status !== filters.status) return false
-    if (filters.priority && task.priority !== filters.priority) return false
-    if (filters.from && task.dueDate < filters.from) return false
-    if (filters.to && task.dueDate > filters.to) return false
-    if (filters.q) {
-      const q = filters.q.toLowerCase()
-      return (
-        task.title.toLowerCase().includes(q) ||
-        task.description.toLowerCase().includes(q)
-      )
-    }
-    return true
-  })
+	const tasks = useMemo(() => {
+		const all = query.data ?? []
+		return all.filter((task) => {
+			if (status && task.status !== status) return false
+			if (priority && task.priority !== priority) return false
+			if (from && task.dueDate < from) return false
+			if (to && task.dueDate > to) return false
+			if (q) {
+				const lower = q.toLowerCase()
+				return (
+					task.title.toLowerCase().includes(lower) ||
+					task.description.toLowerCase().includes(lower)
+				)
+			}
+			return true
+		})
+	}, [query.data, status, priority, from, to, q])
 
-  return { ...query, tasks }
+	return { ...query, tasks }
 }

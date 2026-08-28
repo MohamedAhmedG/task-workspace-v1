@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import type { Task, TaskStatus } from '../types/task'
@@ -18,7 +19,7 @@ interface TaskColumnProps {
   onAddTask: (status: TaskStatus) => void
 }
 
-export function TaskColumn({
+export const TaskColumn = memo(function TaskColumn({
   status,
   tasks,
   onEdit,
@@ -98,4 +99,4 @@ export function TaskColumn({
       </SortableContext>
     </div>
   )
-}
+})
