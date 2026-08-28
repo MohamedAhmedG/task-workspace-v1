@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { TaskBoard } from '@/features/tasks/components/TaskBoard'
+import { TaskFilters } from '@/features/tasks/components/TaskFilters'
 import { TaskFormDialog } from '@/features/tasks/components/TaskFormDialog'
+import { useTaskFilters } from '@/features/tasks/hooks/useTaskFilters'
 import type { Task, TaskStatus } from '@/features/tasks/types/task'
 
 export function BoardPage() {
+  const { filters } = useTaskFilters()
   const [formOpen, setFormOpen] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [defaultStatus, setDefaultStatus] = useState<TaskStatus>('todo')
@@ -56,8 +59,13 @@ export function BoardPage() {
         </button>
       </div>
 
+      <div className="shrink-0">
+        <TaskFilters />
+      </div>
+
       <div className="flex-1 overflow-hidden">
         <TaskBoard
+          filters={filters}
           onEdit={handleEdit}
           onAddTask={handleAddTask}
         />
