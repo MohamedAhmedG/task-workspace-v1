@@ -1,7 +1,58 @@
+import { useState } from 'react'
+import { TaskBoard } from '@/features/tasks/components/TaskBoard'
+import type { Task, TaskStatus } from '@/features/tasks/types/task'
+
 export function BoardPage() {
+  const [_editingTask, setEditingTask] = useState<Task | null>(null)
+  const [_defaultStatus, setDefaultStatus] = useState<TaskStatus>('todo')
+
+  const handleEdit = (task: Task) => {
+    setEditingTask(task)
+  }
+
+  const handleAddTask = (status: TaskStatus) => {
+    setDefaultStatus(status)
+    setEditingTask(null)
+  }
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold text-gray-900">Task Board</h1>
+    <div className="h-full flex flex-col p-6 gap-4 overflow-hidden">
+      <div className="flex items-center justify-between shrink-0">
+        <div>
+          <h1 className="text-xl font-semibold text-gray-900">Board</h1>
+          <p className="text-sm text-gray-500 mt-0.5">
+            Drag cards between columns to update status
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => handleAddTask('todo')}
+          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          Add task
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-hidden">
+        <TaskBoard
+          onEdit={handleEdit}
+          onAddTask={handleAddTask}
+        />
+      </div>
     </div>
   )
 }
