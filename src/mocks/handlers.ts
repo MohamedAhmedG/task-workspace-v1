@@ -6,6 +6,7 @@ import type {
 import { largeSeedTasks, seedTasks } from "./data"
 
 const useLarge =
+	import.meta.env.DEV &&
 	typeof localStorage !== "undefined" &&
 	localStorage.getItem("large_dataset") === "true"
 
@@ -14,6 +15,7 @@ let tasks = structuredClone(useLarge ? largeSeedTasks : seedTasks)
 const DELAY_MS = 400
 
 const shouldFail = () =>
+	import.meta.env.DEV &&
 	typeof localStorage !== "undefined" &&
 	localStorage.getItem("mock_error") === "true"
 
