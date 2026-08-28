@@ -6,6 +6,8 @@ export interface TaskFilters {
   status?: TaskStatus | ''
   priority?: TaskPriority | ''
   q?: string
+  from?: string
+  to?: string
 }
 
 export function useTasksQuery(filters: TaskFilters = {}) {
@@ -19,6 +21,8 @@ export function useTasksQuery(filters: TaskFilters = {}) {
   const tasks = allTasks.filter((task) => {
     if (filters.status && task.status !== filters.status) return false
     if (filters.priority && task.priority !== filters.priority) return false
+    if (filters.from && task.dueDate < filters.from) return false
+    if (filters.to && task.dueDate > filters.to) return false
     if (filters.q) {
       const q = filters.q.toLowerCase()
       return (

@@ -5,6 +5,8 @@ export interface TaskFilterValues {
   q: string
   status: TaskStatus | ''
   priority: TaskPriority | ''
+  from: string
+  to: string
 }
 
 export function useTaskFilters() {
@@ -14,6 +16,8 @@ export function useTaskFilters() {
     q: searchParams.get('q') ?? '',
     status: (searchParams.get('status') as TaskStatus) ?? '',
     priority: (searchParams.get('priority') as TaskPriority) ?? '',
+    from: searchParams.get('from') ?? '',
+    to: searchParams.get('to') ?? '',
   }
 
   const setFilter = (key: keyof TaskFilterValues, value: string) => {
@@ -30,7 +34,13 @@ export function useTaskFilters() {
 
   const clearFilters = () => setSearchParams({}, { replace: true })
 
-  const hasActiveFilters = !!(filters.q || filters.status || filters.priority)
+  const hasActiveFilters = !!(
+    filters.q ||
+    filters.status ||
+    filters.priority ||
+    filters.from ||
+    filters.to
+  )
 
   return { filters, setFilter, clearFilters, hasActiveFilters }
 }

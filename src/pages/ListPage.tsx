@@ -181,7 +181,6 @@ export function ListPage() {
       </div>
 
       <div className="flex-1 overflow-hidden flex flex-col bg-white rounded-xl border border-gray-200 min-h-0">
-        {/* Column headers */}
         <div className="grid grid-cols-[1fr_128px_112px_112px_112px_80px] gap-4 px-4 py-3 border-b border-gray-100 shrink-0 bg-gray-50 rounded-t-xl">
           <button
             type="button"
@@ -233,7 +232,6 @@ export function ListPage() {
           </span>
         </div>
 
-        {/* Body */}
         {isLoading ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="flex items-center gap-2 text-gray-500">
