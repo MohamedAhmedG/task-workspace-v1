@@ -33,7 +33,7 @@ export function BoardPage() {
 				<div>
 					<h1 className='text-xl font-semibold text-gray-900'>Board</h1>
 					<p className='text-sm text-gray-500 mt-0.5'>
-						Click any card to edit, drag to reorder
+						Click any card to edit, drag to move between columns
 					</p>
 				</div>
 				<button

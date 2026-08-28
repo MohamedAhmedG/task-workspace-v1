@@ -85,6 +85,40 @@ const PRIORITY_STYLES: Record<Task["priority"], string> = {
 	low: "bg-emerald-100 text-emerald-700",
 }
 
+function SortHeader({
+	field,
+	active,
+	dir,
+	className,
+	onClick,
+	children,
+}: {
+	field: SortField
+	active: SortField
+	dir: SortDir
+	className: string
+	onClick: () => void
+	children: string
+}) {
+	return (
+		<div
+			role='columnheader'
+			aria-sort={
+				field === active
+					? dir === "asc"
+						? "ascending"
+						: "descending"
+					: "none"
+			}
+		>
+			<button type='button' className={className} onClick={onClick}>
+				{children}
+				<SortIndicator field={field} active={active} dir={dir} />
+			</button>
+		</div>
+	)
+}
+
 function SortIndicator({
 	field,
 	active,
@@ -121,7 +155,7 @@ function SortIndicator({
 const ROW_HEIGHT = 60
 
 export function ListPage() {
-	const { filters } = useTaskFilters()
+	const { filters, hasActiveFilters } = useTaskFilters()
 	const { tasks, isLoading, isError, refetch } = useTasksQuery(filters)
 	const { remove } = useTaskMutations()
 
@@ -211,100 +245,56 @@ export function ListPage() {
 				<div className='h-full overflow-x-auto'>
 					<div className='flex flex-col bg-white rounded-xl border border-gray-200 h-full min-w-180'>
 						<div className='grid grid-cols-[1fr_128px_112px_112px_112px_80px] gap-4 px-4 py-3 border-b border-gray-100 shrink-0 bg-gray-50 rounded-t-xl'>
-							<button
-								type='button'
+							<SortHeader
+								field='title'
+								active={sortField}
+								dir={sortDir}
 								className={colClass}
 								onClick={() => handleSort("title")}
-								aria-sort={
-									sortField === "title"
-										? sortDir === "asc"
-											? "ascending"
-											: "descending"
-										: "none"
-								}
 							>
 								Task
-								<SortIndicator field='title' active={sortField} dir={sortDir} />
-							</button>
-							<button
-								type='button'
+							</SortHeader>
+							<SortHeader
+								field='status'
+								active={sortField}
+								dir={sortDir}
 								className={colClass}
 								onClick={() => handleSort("status")}
-								aria-sort={
-									sortField === "status"
-										? sortDir === "asc"
-											? "ascending"
-											: "descending"
-										: "none"
-								}
 							>
 								Status
-								<SortIndicator
-									field='status'
-									active={sortField}
-									dir={sortDir}
-								/>
-							</button>
-							<button
-								type='button'
+							</SortHeader>
+							<SortHeader
+								field='priority'
+								active={sortField}
+								dir={sortDir}
 								className={colClass}
 								onClick={() => handleSort("priority")}
-								aria-sort={
-									sortField === "priority"
-										? sortDir === "asc"
-											? "ascending"
-											: "descending"
-										: "none"
-								}
 							>
 								Priority
-								<SortIndicator
-									field='priority'
-									active={sortField}
-									dir={sortDir}
-								/>
-							</button>
-							<button
-								type='button'
+							</SortHeader>
+							<SortHeader
+								field='dueDate'
+								active={sortField}
+								dir={sortDir}
 								className={colClass}
 								onClick={() => handleSort("dueDate")}
-								aria-sort={
-									sortField === "dueDate"
-										? sortDir === "asc"
-											? "ascending"
-											: "descending"
-										: "none"
-								}
 							>
 								Due Date
-								<SortIndicator
-									field='dueDate'
-									active={sortField}
-									dir={sortDir}
-								/>
-							</button>
-							<button
-								type='button'
+							</SortHeader>
+							<SortHeader
+								field='createdAt'
+								active={sortField}
+								dir={sortDir}
 								className={colClass}
 								onClick={() => handleSort("createdAt")}
-								aria-sort={
-									sortField === "createdAt"
-										? sortDir === "asc"
-											? "ascending"
-											: "descending"
-										: "none"
-								}
 							>
 								Created
-								<SortIndicator
-									field='createdAt'
-									active={sortField}
-									dir={sortDir}
-								/>
-							</button>
-							<span className='text-xs font-medium text-gray-500 uppercase tracking-wide'>
-								Actions
-							</span>
+							</SortHeader>
+							<div role='columnheader'>
+								<span className='text-xs font-medium text-gray-500 uppercase tracking-wide'>
+									Actions
+								</span>
+							</div>
 						</div>
 
 						{isLoading ? (
@@ -343,7 +333,7 @@ export function ListPage() {
 									No tasks found
 								</p>
 								<p className='text-xs text-gray-400'>
-									{filters.q || filters.status || filters.priority
+									{hasActiveFilters
 										? "Try adjusting your filters"
 										: "Create your first task to get started"}
 								</p>

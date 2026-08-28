@@ -34,8 +34,12 @@ export function TaskFilters() {
 
 	useEffect(() => {
 		const id = setTimeout(() => {
-			if (inputValue !== filtersQRef.current) {
-				setFilterRef.current("q", inputValue)
+			const normalized = inputValue.trimEnd()
+			if (inputValue !== normalized) {
+				setInputValue(normalized)
+			}
+			if (normalized !== (filtersQRef.current ?? "")) {
+				setFilterRef.current("q", normalized)
 			}
 		}, 300)
 		return () => clearTimeout(id)

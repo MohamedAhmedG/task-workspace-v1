@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { createTask, deleteTask, updateTask } from '../api/tasks'
+import { createTask, deleteTask, updateTask } from '../api'
 import type { CreateTaskInput, Task, UpdateTaskInput } from '../types/task'
 
 export function useTaskMutations() {
