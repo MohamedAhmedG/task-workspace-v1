@@ -1,3 +1,5 @@
+import { useDroppable } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import type { Task, TaskStatus } from '../types/task'
 import { TaskCard } from './TaskCard'
 
@@ -23,6 +25,9 @@ export function TaskColumn({
   onAddTask,
 }: TaskColumnProps) {
   const config = COLUMN_CONFIG[status]
+  const taskIds = tasks.map((t) => t.id)
+
+  const { setNodeRef, isOver } = useDroppable({ id: status })
 
   return (
     <div className="flex-shrink-0 w-[300px] flex flex-col bg-gray-50 rounded-xl border border-gray-200">
@@ -59,22 +64,35 @@ export function TaskColumn({
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3 space-y-2.5 min-h-[120px]">
-        {tasks.length === 0 ? (
-          <div className="flex items-center justify-center h-20 rounded-lg border-2 border-dashed border-gray-200">
-            <span className="text-xs text-gray-400">No tasks</span>
-          </div>
-        ) : (
-          tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
-          ))
-        )}
-      </div>
+      <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
+        <div
+          ref={setNodeRef}
+          className={`flex-1 p-3 space-y-2.5 min-h-[120px] rounded-b-xl transition-colors ${
+            isOver ? 'bg-blue-50/60' : ''
+          }`}
+        >
+          {tasks.length === 0 ? (
+            <div
+              className={`flex items-center justify-center h-20 rounded-lg border-2 border-dashed transition-colors ${
+                isOver ? 'border-blue-300 bg-blue-50' : 'border-gray-200'
+              }`}
+            >
+              <span className="text-xs text-gray-400">
+                {isOver ? 'Drop here' : 'No tasks'}
+              </span>
+            </div>
+          ) : (
+            tasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            ))
+          )}
+        </div>
+      </SortableContext>
     </div>
   )
 }

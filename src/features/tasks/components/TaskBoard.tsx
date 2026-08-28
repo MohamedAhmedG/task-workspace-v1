@@ -1,4 +1,17 @@
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  closestCorners,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core'
+import { arrayMove } from '@dnd-kit/sortable'
+import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,13 +22,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { updateTask } from '../api/tasks'
 import type { Task, TaskStatus } from '../types/task'
 import type { TaskFilters } from '../hooks/useTasksQuery'
 import { useTasksQuery } from '../hooks/useTasksQuery'
 import { useTaskMutations } from '../hooks/useTaskMutations'
+import { TaskCardOverlay } from './TaskCard'
 import { TaskColumn } from './TaskColumn'
 
 const COLUMNS: TaskStatus[] = ['todo', 'in_progress', 'done']
+const VALID_STATUSES = new Set<string>(COLUMNS)
 
 interface TaskBoardProps {
   filters?: TaskFilters
@@ -26,7 +42,60 @@ interface TaskBoardProps {
 export function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
   const { tasks, isLoading, isError } = useTasksQuery(filters)
   const { remove } = useTaskMutations()
+  const queryClient = useQueryClient()
+
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [activeTask, setActiveTask] = useState<Task | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+  )
+
+  const handleDragStart = ({ active }: DragStartEvent) => {
+    const allCached = queryClient.getQueryData<Task[]>(['tasks']) ?? []
+    setActiveTask(allCached.find((t) => t.id === active.id) ?? null)
+  }
+
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    setActiveTask(null)
+    if (!over || active.id === over.id) return
+
+    const allCached = queryClient.getQueryData<Task[]>(['tasks']) ?? []
+    const dragged = allCached.find((t) => t.id === active.id)
+    if (!dragged) return
+
+    const targetStatus: TaskStatus = VALID_STATUSES.has(String(over.id))
+      ? (over.id as TaskStatus)
+      : (allCached.find((t) => t.id === over.id)?.status ?? dragged.status)
+
+    if (targetStatus !== dragged.status) {
+      const snapshot = queryClient.getQueryData<Task[]>(['tasks'])
+      queryClient.setQueryData<Task[]>(['tasks'], (old) =>
+        old?.map((t) =>
+          t.id === dragged.id ? { ...t, status: targetStatus } : t,
+        ) ?? [],
+      )
+      updateTask(dragged.id, { status: targetStatus })
+        .then(() =>
+          queryClient.invalidateQueries({ queryKey: ['tasks'] }),
+        )
+        .catch(() => {
+          queryClient.setQueryData(['tasks'], snapshot)
+          toast.error('Failed to move task')
+        })
+    } else {
+      const columnTasks = allCached.filter((t) => t.status === dragged.status)
+      const oldIndex = columnTasks.findIndex((t) => t.id === active.id)
+      const newIndex = columnTasks.findIndex((t) => t.id === over.id)
+      if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return
+      const reordered = arrayMove(columnTasks, oldIndex, newIndex)
+      queryClient.setQueryData<Task[]>(['tasks'], (old) => {
+        if (!old) return []
+        const others = old.filter((t) => t.status !== dragged.status)
+        return [...others, ...reordered]
+      })
+    }
+  }
 
   if (isLoading) {
     return (
@@ -65,18 +134,30 @@ export function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
 
   return (
     <>
-      <div className="flex gap-4 h-full overflow-x-auto pb-2">
-        {COLUMNS.map((status) => (
-          <TaskColumn
-            key={status}
-            status={status}
-            tasks={tasks.filter((t) => t.status === status)}
-            onEdit={onEdit}
-            onDelete={setDeletingId}
-            onAddTask={onAddTask}
-          />
-        ))}
-      </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={() => setActiveTask(null)}
+      >
+        <div className="flex gap-4 h-full overflow-x-auto pb-2">
+          {COLUMNS.map((status) => (
+            <TaskColumn
+              key={status}
+              status={status}
+              tasks={tasks.filter((t) => t.status === status)}
+              onEdit={onEdit}
+              onDelete={setDeletingId}
+              onAddTask={onAddTask}
+            />
+          ))}
+        </div>
+
+        <DragOverlay dropAnimation={null}>
+          {activeTask ? <TaskCardOverlay task={activeTask} /> : null}
+        </DragOverlay>
+      </DndContext>
 
       <AlertDialog
         open={deletingId !== null}
