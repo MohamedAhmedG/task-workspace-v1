@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { createTask, deleteTask, updateTask } from '../api/tasks'
-import type { CreateTaskInput, UpdateTaskInput } from '../types/task'
+import type { CreateTaskInput, Task, UpdateTaskInput } from '../types/task'
 
 export function useTaskMutations() {
   const queryClient = useQueryClient()
@@ -20,11 +20,28 @@ export function useTaskMutations() {
   const update = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateTaskInput }) =>
       updateTask(id, data),
+    onMutate: async ({ id, data }) => {
+      await queryClient.cancelQueries({ queryKey: ['tasks'] })
+      const previousTasks = queryClient.getQueryData<Task[]>(['tasks'])
+      queryClient.setQueryData<Task[]>(['tasks'], (old) =>
+        old?.map((t) =>
+          t.id === id ? { ...t, ...data, updatedAt: new Date().toISOString() } : t
+        ) ?? []
+      )
+      return { previousTasks }
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(['tasks'], context.previousTasks)
+      }
+      toast.error('Failed to update task')
+    },
     onSuccess: () => {
       toast.success('Task updated')
+    },
+    onSettled: () => {
       invalidate()
     },
-    onError: () => toast.error('Failed to update task'),
   })
 
   const remove = useMutation({

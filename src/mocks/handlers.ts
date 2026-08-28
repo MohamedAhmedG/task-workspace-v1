@@ -1,15 +1,25 @@
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse, delay } from 'msw'
 import type { CreateTaskInput, UpdateTaskInput } from '@/features/tasks/types/task'
 import { seedTasks } from './data'
 
 let tasks = structuredClone(seedTasks)
 
+const DELAY_MS = 400
+
+const shouldFail = () =>
+  typeof localStorage !== 'undefined' &&
+  localStorage.getItem('mock_error') === 'true'
+
 export const handlers = [
-  http.get('/api/tasks', () => {
+  http.get('/api/tasks', async () => {
+    await delay(DELAY_MS)
+    if (shouldFail()) return HttpResponse.json({ error: 'Simulated error' }, { status: 500 })
     return HttpResponse.json(tasks)
   }),
 
   http.post('/api/tasks', async ({ request }) => {
+    await delay(DELAY_MS)
+    if (shouldFail()) return HttpResponse.json({ error: 'Simulated error' }, { status: 500 })
     const body = (await request.json()) as CreateTaskInput
     const now = new Date().toISOString()
     const task = {
@@ -23,6 +33,8 @@ export const handlers = [
   }),
 
   http.patch('/api/tasks/:id', async ({ request, params }) => {
+    await delay(DELAY_MS)
+    if (shouldFail()) return HttpResponse.json({ error: 'Simulated error' }, { status: 500 })
     const id = params['id'] as string
     const body = (await request.json()) as UpdateTaskInput
     const index = tasks.findIndex((t) => t.id === id)
@@ -37,7 +49,9 @@ export const handlers = [
     return HttpResponse.json(tasks[index])
   }),
 
-  http.delete('/api/tasks/:id', ({ params }) => {
+  http.delete('/api/tasks/:id', async ({ params }) => {
+    await delay(DELAY_MS)
+    if (shouldFail()) return HttpResponse.json({ error: 'Simulated error' }, { status: 500 })
     const id = params['id'] as string
     const index = tasks.findIndex((t) => t.id === id)
     if (index === -1) {
