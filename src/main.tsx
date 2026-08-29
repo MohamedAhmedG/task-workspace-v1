@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from 'react-router-dom'
 import { Toaster } from 'sonner'
-import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { router } from '@/routes/index'
 import './index.css'
 
@@ -20,12 +19,10 @@ const { worker } = await import('./mocks/browser')
 await worker.start({ onUnhandledRequest: 'bypass' })
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ErrorBoundary>
+    <StrictMode>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
         <Toaster richColors position="bottom-right" />
       </QueryClientProvider>
-    </ErrorBoundary>
-  </StrictMode>,
+    </StrictMode>,
 )

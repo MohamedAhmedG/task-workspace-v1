@@ -75,7 +75,6 @@ src/
 │   ├── Layout/
 │   │   ├── Header.tsx        # Board/List nav from routes/paths
 │   │   └── index.tsx         # Header + <Outlet />
-│   ├── ErrorBoundary.tsx
 │   └── ui/                   # shadcn/ui primitives
 ├── features/
 │   └── tasks/
@@ -104,6 +103,7 @@ src/
 │   └── ListPage.tsx
 └── routes/
     ├── PageFallback.tsx      # Suspense fallback for lazy pages
+    ├── RouteError.tsx        # router errorElement
     ├── paths.ts              # ROUTES + navLinks
     └── index.tsx             # createBrowserRouter, lazy Board/List
 ```

@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { PageFallback } from './PageFallback'
+import { RouteError } from './RouteError'
 import { ROUTES } from './paths'
 
 const BoardPage = lazy(() =>
@@ -16,6 +17,7 @@ export { ROUTES, navLinks } from './paths'
 export const router = createBrowserRouter([
   {
     element: <Layout />,
+    errorElement: <RouteError />,
     children: [
       {
         path: ROUTES.board,
