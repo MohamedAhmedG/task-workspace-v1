@@ -222,7 +222,7 @@ function ListRow({
 }
 
 function TaskList({ filters = {}, onEdit }: TaskListProps) {
-	const { tasks, isLoading, isError, refetch } = useTasksQuery(filters)
+	const { tasks, isLoading, isError } = useTasksQuery(filters)
 	const { remove } = useTaskMutations()
 	const { q = "", status = "", priority = "", from = "", to = "" } = filters
 	const hasActiveFilters = !!(q || status || priority || from || to)

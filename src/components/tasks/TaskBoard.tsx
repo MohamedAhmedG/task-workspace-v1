@@ -44,7 +44,7 @@ function statusFromDrop(overId: UniqueIdentifier, tasks: Task[]) {
 }
 
 function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
-	const { tasks, isLoading, isError, refetch } = useTasksQuery(filters)
+	const { tasks, isLoading, isError } = useTasksQuery(filters)
 	const { remove, update } = useTaskMutations()
 
 	const [deletingId, setDeletingId] = useState<string | null>(null)
