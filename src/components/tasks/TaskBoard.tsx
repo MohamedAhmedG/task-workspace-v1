@@ -4,8 +4,11 @@ import {
 	KeyboardSensor,
 	PointerSensor,
 	closestCorners,
+	pointerWithin,
+	rectIntersection,
 	useSensor,
 	useSensors,
+	type CollisionDetection,
 	type DragEndEvent,
 	type DragStartEvent,
 	type UniqueIdentifier,
@@ -41,6 +44,16 @@ function statusFromDrop(overId: UniqueIdentifier, tasks: Task[]) {
 	const id = String(overId)
 	if (isTaskStatus(id)) return id
 	return findTask(tasks, id)?.status
+}
+
+const detectCollision: CollisionDetection = (args) => {
+	const pointerHits = pointerWithin(args)
+	if (pointerHits.length > 0) return pointerHits
+
+	const intersections = rectIntersection(args)
+	if (intersections.length > 0) return intersections
+
+	return closestCorners(args)
 }
 
 function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
@@ -95,7 +108,7 @@ function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
 		<>
 			<DndContext
 				sensors={sensors}
-				collisionDetection={closestCorners}
+				collisionDetection={detectCollision}
 				onDragStart={handleDragStart}
 				onDragEnd={handleDragEnd}
 				onDragCancel={() => setActiveTask(null)}

@@ -27,7 +27,7 @@ export const TaskColumn = memo(function TaskColumn({
 	const { setNodeRef, isOver } = useDroppable({ id: status })
 
 	return (
-		<div className='shrink-0 w-75 flex flex-col bg-gray-50 rounded-xl border border-gray-200'>
+		<div className='shrink-0 w-75 h-full min-h-0 flex flex-col bg-gray-50 rounded-xl border border-gray-200'>
 			<div className='px-4 py-3 flex items-center justify-between'>
 				<div className='flex items-center gap-2'>
 					<span className={`w-2 h-2 rounded-full ${TASK_STATUS_DOTS[status]}`} />
@@ -51,18 +51,18 @@ export const TaskColumn = memo(function TaskColumn({
 					ref={setNodeRef}
 					role='list'
 					aria-label={`${label} tasks`}
-					className={`flex-1 p-3 space-y-2.5 min-h-30 rounded-b-xl transition-colors ${
+					className={`flex flex-col flex-1 min-h-30 p-3 space-y-2.5 rounded-b-xl transition-colors ${
 						isOver ? "bg-blue-50/60" : ""
 					}`}
 				>
 					{tasks.length === 0 ? (
 						<div
-							className={`flex items-center justify-center h-20 rounded-lg border-2 border-dashed transition-colors ${
+							className={`flex flex-1 items-center justify-center min-h-20 rounded-lg border-2 border-dashed transition-colors ${
 								isOver ? "border-blue-300 bg-blue-50" : "border-gray-200"
 							}`}
 						>
 							<span className='text-xs text-gray-400'>
-								{isOver ? "Drop here" : "No tasks"}
+								{isOver ? "Drop here" : "Drop tasks here"}
 							</span>
 						</div>
 					) : (
