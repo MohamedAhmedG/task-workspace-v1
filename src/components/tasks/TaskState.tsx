@@ -2,13 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import { TASK_STATUSES } from "@/types/task"
 
-function TaskError({
-	className,
-	onRetry,
-}: {
-	className?: string
-	onRetry: () => void
-}) {
+function TaskError({ className }: { className?: string }) {
 	return (
 		<div
 			className={cn(
@@ -19,7 +13,6 @@ function TaskError({
 			<p className='text-sm text-red-600'>Failed to load tasks.</p>
 			<button
 				type='button'
-				onClick={onRetry}
 				className='text-sm font-medium text-blue-600 hover:text-blue-800 underline underline-offset-2'
 			>
 				Retry

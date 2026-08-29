@@ -26,7 +26,6 @@ type TaskListProps = {
 	tasks: Task[]
 	isLoading: boolean
 	isError: boolean
-	onRetry: () => void
 	hasActiveFilters: boolean
 	onEdit: (task: Task) => void
 }
@@ -191,7 +190,6 @@ function TaskList({
 	tasks,
 	isLoading,
 	isError,
-	onRetry,
 	hasActiveFilters,
 	onEdit,
 }: TaskListProps) {
@@ -251,7 +249,7 @@ function TaskList({
 						{isLoading ? (
 							<ListSkeleton />
 						) : isError ? (
-							<TaskError className='flex-1' onRetry={onRetry} />
+							<TaskError className='flex-1' />
 						) : sortedTasks.length === 0 ? (
 							<ListEmpty hasActiveFilters={hasActiveFilters} />
 						) : (

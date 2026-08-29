@@ -57,7 +57,7 @@ const detectCollision: CollisionDetection = (args) => {
 }
 
 function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
-	const { tasks, isLoading, isError, refetch } = useTasksQuery(filters)
+	const { tasks, isLoading, isError } = useTasksQuery(filters)
 	const { remove, update } = useTaskMutations()
 
 	const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -102,7 +102,7 @@ function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
 	}
 
 	if (isLoading) return <TaskBoardSkeleton />
-	if (isError) return <TaskError className='h-64' onRetry={() => refetch()} />
+	if (isError) return <TaskError className='h-64' />
 
 	return (
 		<>

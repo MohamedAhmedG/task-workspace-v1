@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
@@ -22,6 +23,29 @@ interface TaskFormDialogProps {
 	defaultStatus?: TaskStatus
 }
 
+function getFormValues(
+	task: Task | null | undefined,
+	defaultStatus: TaskStatus,
+): TaskFormValues {
+	if (task) {
+		return {
+			title: task.title,
+			description: task.description,
+			status: task.status,
+			priority: task.priority,
+			dueDate: task.dueDate,
+		}
+	}
+
+	return {
+		title: "",
+		description: "",
+		status: defaultStatus,
+		priority: "medium",
+		dueDate: "",
+	}
+}
+
 export function TaskFormDialog({
 	open,
 	onClose,
@@ -33,14 +57,15 @@ export function TaskFormDialog({
 
 	const form = useForm<TaskFormValues>({
 		resolver: zodResolver(createTaskSchema),
-		values: {
-			title: task?.title ?? "",
-			description: task?.description ?? "",
-			status: task?.status ?? defaultStatus,
-			priority: task?.priority ?? "medium",
-			dueDate: task?.dueDate ?? "",
-		},
+		defaultValues: getFormValues(task, defaultStatus),
 	})
+
+	const { reset } = form
+
+	useEffect(() => {
+		if (!open) return
+		reset(getFormValues(task, defaultStatus))
+	}, [open, task, defaultStatus, reset])
 
 	const onSubmit = (values: TaskFormValues) => {
 		if (isEditing) {

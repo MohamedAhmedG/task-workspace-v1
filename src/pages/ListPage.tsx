@@ -10,7 +10,7 @@ import type { Task } from "@/types/task"
 
 function ListPage() {
 	const { filters, hasActiveFilters } = useTaskFilters()
-	const { tasks, isLoading, isError, refetch } = useTasksQuery(filters)
+	const { tasks, isLoading, isError } = useTasksQuery(filters)
 	const [formOpen, setFormOpen] = useState(false)
 	const [editingTask, setEditingTask] = useState<Task | null>(null)
 
@@ -56,7 +56,6 @@ function ListPage() {
 				tasks={tasks}
 				isLoading={isLoading}
 				isError={isError}
-				onRetry={() => refetch()}
 				hasActiveFilters={hasActiveFilters}
 				onEdit={handleEdit}
 			/>

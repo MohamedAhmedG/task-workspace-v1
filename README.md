@@ -19,6 +19,7 @@ MSW also starts in production builds so the same mock API works on Vercel/Netlif
 npm run build      # production build
 npm run preview    # preview the production build
 npm run lint       # oxlint
+npm run test       # Vitest (jsdom)
 ```
 
 ---
@@ -39,6 +40,7 @@ npm run lint       # oxlint
 | Virtualization | TanStack Virtual v3 |
 | Toasts | Sonner |
 | Lint | oxlint |
+| Tests | Vitest + Testing Library |
 
 ---
 
@@ -47,7 +49,7 @@ npm run lint       # oxlint
 **Board view** — Kanban board with To Do / In Progress / In Review / Done columns.
 - Click a card (or the header **Add task** button) to create or edit
 - Add a task to a specific column from the column header
-- Drag a card to a different column to change its status (optimistic PATCH)
+- Drag a card to a different column to change its status (optimistic PATCH; empty columns stay droppable)
 - Keyboard drag is supported (dnd-kit `KeyboardSensor`)
 - Delete with confirmation via the per-card trash icon
 
@@ -68,6 +70,7 @@ npm run lint       # oxlint
 - Title (required, max 100 chars)
 - Description (optional, max 500 chars)
 - Status, priority, and due date (due date required)
+- Each Create session starts from empty defaults (column “add” only presets status); Edit still loads the selected task
 
 **Errors** — Route render failures use React Router `errorElement` (`RouteError`). The recovery action navigates home (`/`). Query load failures show **Retry**, which calls TanStack Query `refetch()` without reloading the page.
 
@@ -91,7 +94,13 @@ src/
 ├── schemas/
 │   └── task.ts               # Zod create/update schemas
 ├── types/
-│   └── task.ts               # Task types, status/priority options, labels, sort order
+│   └── task.ts               # Task types, status/priority values, labels, sort order
+├── test/
+│   ├── setup.ts              # jsdom, MSW, store reset
+│   ├── server.ts             # test MSW server
+│   ├── fixtures.ts
+│   ├── render.tsx            # board/list render helpers
+│   └── task-workflows.test.tsx
 ├── components/
 │   ├── Layout/
 │   │   ├── Header.tsx        # Board/List nav from routes/paths
@@ -120,6 +129,8 @@ src/
     └── index.tsx             # createBrowserRouter, lazy Board/List
 ```
 
+Colocated unit tests: `src/lib/task-filter.test.ts`, `src/lib/task-list.test.ts`, `src/schemas/task.test.ts`.
+
 `api`, `hooks`, `schemas`, and `types` live at `src/` so they are app-wide. Task UI lives in `src/components/tasks/`.
 
 Status and priority **values** are defined once as `TASK_STATUSES` / `TASK_PRIORITIES` in `src/types/task.ts`. Labels, form/filter options, board columns, and Zod enums (`src/schemas/task.ts`) are derived from those arrays. Colors (badges and column dots) live in `src/lib/task-styles.ts`.
@@ -140,7 +151,7 @@ export const navLinks = [
 ]
 ```
 
-The router uses `ROUTES` for `path`. `Header` imports `navLinks` directly — no hardcoded `/list` in the layout.
+The router uses `ROUTES` for `path`. `Header` imports `navLinks` and keeps the current search string when switching Board ↔ List, so filters stay in the URL.
 
 Board and List pages are lazy-loaded with `React.lazy` + `Suspense` (`PageFallback` while the chunk loads). The layout route sets `errorElement: <RouteError />`.
 
@@ -176,6 +187,8 @@ Cross-column drags change status through the same `updateTask()` mutation used b
 4. On success — invalidate the query so the cache re-syncs.
 5. On error — restore the snapshot and show an error toast.
 
+Empty columns remain droppable (`useDroppable` on the full column body). Collision detection prefers `pointerWithin`, then `rectIntersection`, then `closestCorners`, so a column with zero cards is still a valid drop target.
+
 Same-column dragging does not persist a manual order. Order is not part of the task model.
 
 Create and delete are not optimistic — they invalidate `['tasks']` after success.
@@ -192,6 +205,20 @@ Board and List share `TaskDeleteDialog` for the confirm step.
 
 ---
 
+## Testing
+
+```bash
+npm run test
+```
+
+Vitest runs in jsdom with Testing Library. Setup lives in `src/test/` (MSW server, store reset, board/list render helpers). Coverage includes:
+
+- Filter and sort helpers
+- Zod create/update schemas
+- Create, delete confirm/cancel, optimistic-update rollback, and search debounce/URL sync
+
+---
+
 ## Trade-offs and known limitations
 
 **MSW mock data resets on page refresh.** The in-memory mock store (`src/mocks/store.ts`) is re-initialized from `seedTasks` on every full page reload. This is intentional for a demo environment — no backend persistence is expected.
@@ -201,5 +228,3 @@ Board and List share `TaskDeleteDialog` for the confirm step.
 **Filtering is client-side.** The mock API has no query-string contract, so the client downloads all tasks once and filters locally. Fine for this dataset size; a real backend would filter on the server.
 
 **shadcn init placed files in a literal `@/` directory.** During setup, `npx shadcn@latest init` did not resolve the `@` path alias and created files at `@/components/ui/` instead of `src/components/ui/`. Files were manually moved to the correct location.
-
-**Automated testing** is planned as a dedicated follow-up phase covering critical user flows (CRUD, filtering, drag-and-drop interactions).
