@@ -63,6 +63,7 @@ npm run test       # Vitest (jsdom)
 - Status filter (To Do / In Progress / In Review / Done)
 - Priority filter (Low / Medium / High / Urgent)
 - Inclusive due-date From / To range
+- Invalid `status` / `priority` query values are ignored (treated as no filter)
 - Bookmarkable URLs; Board/List navigation keeps the same params
 - Filtering is **client-side** after a single `GET /api/tasks`
 
@@ -70,9 +71,10 @@ npm run test       # Vitest (jsdom)
 - Title (required, max 100 chars)
 - Description (optional, max 500 chars)
 - Status, priority, and due date (due date required)
-- Each Create session starts from empty defaults (column “add” only presets status); Edit still loads the selected task
+- Opening Create always `reset()`s to empty defaults (column “add” only presets status)
+- Edit loads the selected task; cancelled drafts do not reopen
 
-**Errors** — Route render failures use React Router `errorElement` (`RouteError`). The recovery action navigates home (`/`). Query load failures show **Retry**, which calls TanStack Query `refetch()` without reloading the page.
+**Errors** — Route render failures use React Router `errorElement` (`RouteError`). The recovery action navigates home (`/`). Query load failures render a shared `TaskError` message. TanStack Query retries the request once (`retry: 1`) before that UI is shown.
 
 ---
 
@@ -94,10 +96,10 @@ src/
 ├── schemas/
 │   └── task.ts               # Zod create/update schemas
 ├── types/
-│   └── task.ts               # Task types, status/priority values, labels, sort order
+│   └── task.ts               # Task types, status/priority values, labels, sort order, TaskFilters
 ├── test/
-│   ├── setup.ts              # jsdom, MSW, store reset
-│   ├── server.ts             # test MSW server
+│   ├── setup.ts              # jsdom, MSW listen/reset, store reset
+│   ├── server.ts             # Vitest MSW server
 │   ├── fixtures.ts
 │   ├── render.tsx            # board/list render helpers
 │   └── task-workflows.test.tsx
@@ -117,7 +119,7 @@ src/
 ├── mocks/
 │   ├── browser.ts
 │   ├── store.ts              # in-memory task list
-│   ├── handlers.ts           # GET/POST/PATCH/DELETE /api/tasks
+│   ├── handlers.ts           # GET/POST/PATCH/DELETE /api/tasks (Zod-validated bodies)
 │   └── data.ts
 ├── pages/
 │   ├── BoardPage.tsx
@@ -129,9 +131,9 @@ src/
     └── index.tsx             # createBrowserRouter, lazy Board/List
 ```
 
-Colocated unit tests: `src/lib/task-filter.test.ts`, `src/lib/task-list.test.ts`, `src/schemas/task.test.ts`.
+Colocated unit tests: `src/lib/task-filter.test.ts`, `src/lib/task-list.test.ts`, `src/schemas/task.test.ts`. Vitest is configured in `vite.config.ts` (`environment: jsdom`, `setupFiles: src/test/setup.ts`).
 
-`api`, `hooks`, `schemas`, and `types` live at `src/` so they are app-wide. Task UI lives in `src/components/tasks/`.
+`api`, `hooks`, `schemas`, and `types` live at `src/` so they are app-wide. Task UI lives in `src/components/tasks/`. List data is owned by `ListPage` (`useTasksQuery`) and passed into `TaskList`. The board fetches inside `TaskBoard`.
 
 Status and priority **values** are defined once as `TASK_STATUSES` / `TASK_PRIORITIES` in `src/types/task.ts`. Labels, form/filter options, board columns, and Zod enums (`src/schemas/task.ts`) are derived from those arrays. Colors (badges and column dots) live in `src/lib/task-styles.ts`.
 
@@ -166,12 +168,12 @@ TanStack Query hooks
 
 Hooks never import Axios. Task API functions return `response.data` (or `void` for delete). Axios rejects 4xx/5xx, which TanStack Query surfaces as query/mutation errors.
 
-`useTasksQuery` always fetches the full list (`queryKey: ['tasks']`) and applies URL filters in memory.
+`useTasksQuery` always fetches the full list (`queryKey: ['tasks']`) and applies URL filters in memory via `filterTasks`. POST/PATCH mock bodies are checked with `createTaskSchema` / `updateTaskSchema`.
 
 ### State ownership
 
 - **Server state** — TanStack Query owns all task data. Nothing is duplicated in `useState` or a separate store.
-- **Filter / search state** — Lives in URL search params (`?q=&status=&priority=&from=&to=`). Both views read the same params via `useTaskFilters`.
+- **Filter / search state** — Lives in URL search params (`?q=&status=&priority=&from=&to=`). Both views read the same params via `useTaskFilters`. Unknown status/priority values are dropped.
 - **UI state** — Local `useState` in the component that owns it (dialog open/close, sort field, active drag item).
 - **Zustand** — Not introduced. There was no cross-feature shared client state that required it.
 
@@ -211,11 +213,11 @@ Board and List share `TaskDeleteDialog` for the confirm step.
 npm run test
 ```
 
-Vitest runs in jsdom with Testing Library. Setup lives in `src/test/` (MSW server, store reset, board/list render helpers). Coverage includes:
+Vitest runs in jsdom with Testing Library. Setup lives in `src/test/` (MSW server, in-memory store reset, board/list render helpers). Coverage includes:
 
-- Filter and sort helpers
-- Zod create/update schemas
-- Create, delete confirm/cancel, optimistic-update rollback, and search debounce/URL sync
+- `filterTasks` / `sortTasks` helpers
+- Zod create schema (domain values + title rules)
+- Create, delete confirm/cancel, optimistic-update rollback, and search debounce / `trimEnd` / URL sync
 
 ---
 
@@ -227,4 +229,4 @@ Vitest runs in jsdom with Testing Library. Setup lives in `src/test/` (MSW serve
 
 **Filtering is client-side.** The mock API has no query-string contract, so the client downloads all tasks once and filters locally. Fine for this dataset size; a real backend would filter on the server.
 
-**shadcn init placed files in a literal `@/` directory.** During setup, `npx shadcn@latest init` did not resolve the `@` path alias and created files at `@/components/ui/` instead of `src/components/ui/`. Files were manually moved to the correct location.
+**Query error UI has no Retry control.** Failed loads show a message only. A full page reload would also reset the in-memory MSW store; query `retry: 1` is the automatic recovery path.

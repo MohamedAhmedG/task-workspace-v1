@@ -11,12 +11,6 @@ function TaskError({ className }: { className?: string }) {
 			)}
 		>
 			<p className='text-sm text-red-600'>Failed to load tasks.</p>
-			<button
-				type='button'
-				className='text-sm font-medium text-blue-600 hover:text-blue-800 underline underline-offset-2'
-			>
-				Retry
-			</button>
 		</div>
 	)
 }
