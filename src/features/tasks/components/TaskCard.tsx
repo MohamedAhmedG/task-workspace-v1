@@ -3,7 +3,7 @@ import { Calendar, GripVertical } from 'lucide-react'
 import { CSS } from '@dnd-kit/utilities'
 import { useSortable } from '@dnd-kit/sortable'
 import { formatDate } from '@/lib/utils'
-import type { Task } from '../types/task'
+import type { Task } from '@/types/task'
 
 const PRIORITY_STYLES = {
   urgent: 'bg-red-600 text-white',

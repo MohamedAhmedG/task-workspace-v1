@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select } from "@/components/ui/select"
-import { useTaskFilters } from "../hooks/useTaskFilters"
+import { useTaskFilters } from "@/hooks/useTaskFilters"
 
 export function TaskFilters() {
 	const { filters, setFilter, clearFilters, hasActiveFilters } =

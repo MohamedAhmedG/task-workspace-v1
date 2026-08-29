@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { getTasks } from "../api"
-import type { TaskPriority, TaskStatus } from "../types/task"
+import { getTasks } from "@/api"
+import type { TaskPriority, TaskStatus } from "@/types/task"
 
 export interface TaskFilters {
 	status?: TaskStatus | ""

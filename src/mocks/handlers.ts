@@ -2,7 +2,7 @@ import { http, HttpResponse, delay } from "msw"
 import type {
 	CreateTaskInput,
 	UpdateTaskInput,
-} from "@/features/tasks/types/task"
+} from "@/types/task"
 import { largeSeedTasks, seedTasks } from "./data"
 
 const useLarge =

@@ -1,5 +1,5 @@
 import { apiClient } from '@/lib/api-client'
-import type { Task } from '../types/task'
+import type { Task } from '@/types/task'
 
 export async function getTasks(): Promise<Task[]> {
   const response = await apiClient.get<Task[]>('/tasks')

@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom'
-import type { TaskPriority, TaskStatus } from '../types/task'
+import type { TaskPriority, TaskStatus } from '@/types/task'
 import type { TaskFilters } from './useTasksQuery'
 
 export function useTaskFilters() {

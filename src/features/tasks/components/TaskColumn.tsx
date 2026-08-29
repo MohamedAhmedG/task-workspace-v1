@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import type { Task, TaskStatus } from '../types/task'
+import type { Task, TaskStatus } from '@/types/task'
 import { TaskCard } from './TaskCard'
 
 const COLUMN_CONFIG = {

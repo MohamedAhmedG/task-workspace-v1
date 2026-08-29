@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { createTaskSchema, type TaskFormValues } from "../schemas/task"
-import { useTaskMutations } from "../hooks/useTaskMutations"
-import type { Task, TaskStatus } from "../types/task"
+import { createTaskSchema, type TaskFormValues } from "@/schemas/task"
+import { useTaskMutations } from "@/hooks/useTaskMutations"
+import type { Task, TaskStatus } from "@/types/task"
 
 interface TaskFormDialogProps {
 	open: boolean

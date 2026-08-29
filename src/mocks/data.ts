@@ -2,7 +2,7 @@ import type {
 	Task,
 	TaskPriority,
 	TaskStatus,
-} from "@/features/tasks/types/task"
+} from "@/types/task"
 
 const TITLES = [
 	"Design system audit",

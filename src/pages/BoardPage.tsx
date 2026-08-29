@@ -2,8 +2,8 @@ import { useCallback, useState } from "react"
 import { TaskBoard } from "@/features/tasks/components/TaskBoard"
 import { TaskFilters } from "@/features/tasks/components/TaskFilters"
 import { TaskFormDialog } from "@/features/tasks/components/TaskFormDialog"
-import { useTaskFilters } from "@/features/tasks/hooks/useTaskFilters"
-import type { Task, TaskStatus } from "@/features/tasks/types/task"
+import { useTaskFilters } from "@/hooks/useTaskFilters"
+import type { Task, TaskStatus } from "@/types/task"
 
 export function BoardPage() {
 	const { filters } = useTaskFilters()

@@ -71,6 +71,20 @@ npm run preview    # preview the production build
 ```
 src/
 ├── main.tsx                  # MSW, QueryClientProvider, Toaster, render
+├── api/
+│   ├── get-tasks.ts
+│   ├── create-task.ts
+│   ├── update-task.ts
+│   ├── delete-task.ts
+│   └── index.ts
+├── hooks/
+│   ├── useTasksQuery.ts
+│   ├── useTaskMutations.ts
+│   └── useTaskFilters.ts
+├── schemas/
+│   └── task.ts
+├── types/
+│   └── task.ts
 ├── components/
 │   ├── Layout/
 │   │   ├── Header.tsx        # Board/List nav from routes/paths
@@ -78,19 +92,7 @@ src/
 │   └── ui/                   # shadcn/ui primitives
 ├── features/
 │   └── tasks/
-│       ├── api/
-│       │   ├── get-tasks.ts
-│       │   ├── create-task.ts
-│       │   ├── update-task.ts
-│       │   ├── delete-task.ts
-│       │   └── index.ts
-│       ├── components/        # TaskBoard, TaskColumn, TaskCard, TaskFormDialog, TaskFilters
-│       ├── hooks/
-│       │   ├── useTasksQuery.ts
-│       │   ├── useTaskMutations.ts
-│       │   └── useTaskFilters.ts
-│       ├── schemas/task.ts
-│       └── types/task.ts
+│       └── components/        # TaskBoard, TaskColumn, TaskCard, TaskFormDialog, TaskFilters
 ├── lib/
 │   ├── api-client.ts         # shared Axios instance (baseURL: /api)
 │   └── utils.ts
@@ -132,7 +134,7 @@ Board and List pages are lazy-loaded with `React.lazy` + `Suspense`.
 
 ```
 TanStack Query hooks
-  → features/tasks/api/*
+  → api/*
   → lib/api-client.ts (Axios, baseURL /api)
   → MSW
 ```

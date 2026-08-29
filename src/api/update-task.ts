@@ -1,5 +1,5 @@
 import { apiClient } from '@/lib/api-client'
-import type { Task, UpdateTaskInput } from '../types/task'
+import type { Task, UpdateTaskInput } from '@/types/task'
 
 export async function updateTask(
   id: string,
