@@ -17,6 +17,10 @@ export const TASK_PRIORITY_OPTIONS: { value: TaskPriority; label: string }[] = [
 
 export const TASK_STATUSES = TASK_STATUS_OPTIONS.map((option) => option.value)
 
+export function isTaskStatus(value: string): value is TaskStatus {
+  return TASK_STATUSES.some((status) => status === value)
+}
+
 export const TASK_STATUS_ORDER = Object.fromEntries(
   TASK_STATUSES.map((status, index) => [status, index]),
 ) as Record<TaskStatus, number>

@@ -27,6 +27,7 @@ import {
 } from "@/types/task"
 import { TaskBadge } from "./TaskBadge"
 import { TaskDeleteDialog } from "./TaskDeleteDialog"
+import { TaskError } from "./TaskState"
 
 type TaskListProps = {
 	filters?: TaskFilters
@@ -133,21 +134,6 @@ function ListSkeleton() {
 					</div>
 				</div>
 			))}
-		</div>
-	)
-}
-
-function ListError({ onRetry }: { onRetry: () => void }) {
-	return (
-		<div className='flex-1 flex flex-col items-center justify-center gap-3'>
-			<p className='text-sm text-red-600'>Failed to load tasks.</p>
-			<button
-				type='button'
-				onClick={onRetry}
-				className='text-sm font-medium text-blue-600 hover:text-blue-800 underline underline-offset-2'
-			>
-				Retry
-			</button>
 		</div>
 	)
 }
@@ -295,7 +281,7 @@ function TaskList({ filters = {}, onEdit }: TaskListProps) {
 						{isLoading ? (
 							<ListSkeleton />
 						) : isError ? (
-							<ListError onRetry={() => refetch()} />
+							<TaskError className='flex-1' />
 						) : sortedTasks.length === 0 ? (
 							<ListEmpty hasActiveFilters={hasActiveFilters} />
 						) : (

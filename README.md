@@ -97,7 +97,7 @@ src/
 │   │   ├── Header.tsx        # Board/List nav from routes/paths
 │   │   └── index.tsx         # Header + <Outlet />
 │   ├── tasks/                # TaskBoard, TaskList, TaskColumn, TaskCard, TaskBadge,
-│   │                         # TaskFormDialog, TaskFilters, TaskDeleteDialog
+│   │                         # TaskFormDialog, TaskFilters, TaskDeleteDialog, TaskState
 │   └── ui/                   # composed shadcn primitives (Select, Dialog, AlertDialog, …)
 ├── lib/
 │   ├── api-client.ts         # shared Axios instance (baseURL: /api)
