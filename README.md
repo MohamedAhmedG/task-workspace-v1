@@ -70,12 +70,11 @@ npm run preview    # preview the production build
 
 ```
 src/
-├── main.tsx
+├── main.tsx                  # MSW, QueryClientProvider, Toaster, render
 ├── components/
 │   ├── Layout/
 │   │   ├── Header.tsx        # Board/List nav from routes/paths
 │   │   └── index.tsx         # Header + <Outlet />
-│   ├── Providers.tsx         # QueryClientProvider + Sonner Toaster
 │   ├── ErrorBoundary.tsx
 │   └── ui/                   # shadcn/ui primitives
 ├── features/
