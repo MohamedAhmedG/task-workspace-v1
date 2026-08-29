@@ -5,7 +5,6 @@ import {
 	Dialog,
 	DialogContent,
 	DialogFooter,
-	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -67,9 +66,7 @@ export function TaskFormDialog({
 			}}
 		>
 			<DialogContent className='sm:max-w-120'>
-				<DialogHeader>
-					<DialogTitle>{isEditing ? "Edit task" : "New task"}</DialogTitle>
-				</DialogHeader>
+				<DialogTitle>{isEditing ? "Edit task" : "New task"}</DialogTitle>
 
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
@@ -167,32 +164,36 @@ export function TaskFormDialog({
 								)}
 							/>
 						</div>
-				</div>
+					</div>
 
-				<div className='space-y-1.5'>
-					<Label htmlFor='task-due-date'>
-						Due Date{' '}
-						<span className='text-red-500' aria-hidden='true'>
-							*
-						</span>
-					</Label>
-					<Input
-						id='task-due-date'
-						type='date'
-						aria-invalid={!!form.formState.errors.dueDate}
-						aria-describedby={
-							form.formState.errors.dueDate ? 'due-date-error' : undefined
-						}
-						{...form.register('dueDate')}
-					/>
-					{form.formState.errors.dueDate && (
-						<p id='due-date-error' className='text-xs text-red-500' role='alert'>
-							{form.formState.errors.dueDate.message}
-						</p>
-					)}
-				</div>
+					<div className='space-y-1.5'>
+						<Label htmlFor='task-due-date'>
+							Due Date{" "}
+							<span className='text-red-500' aria-hidden='true'>
+								*
+							</span>
+						</Label>
+						<Input
+							id='task-due-date'
+							type='date'
+							aria-invalid={!!form.formState.errors.dueDate}
+							aria-describedby={
+								form.formState.errors.dueDate ? "due-date-error" : undefined
+							}
+							{...form.register("dueDate")}
+						/>
+						{form.formState.errors.dueDate && (
+							<p
+								id='due-date-error'
+								className='text-xs text-red-500'
+								role='alert'
+							>
+								{form.formState.errors.dueDate.message}
+							</p>
+						)}
+					</div>
 
-				<DialogFooter>
+					<DialogFooter>
 						<Button
 							type='button'
 							variant='outline'
