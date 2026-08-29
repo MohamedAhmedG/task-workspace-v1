@@ -1,8 +1,4 @@
-import type {
-	Task,
-	TaskPriority,
-	TaskStatus,
-} from "@/types/task"
+import { TASK_PRIORITY_OPTIONS, TASK_STATUSES, type Task } from "@/types/task"
 
 const TITLES = [
 	"Design system audit",
@@ -40,9 +36,6 @@ const DESCRIPTIONS = [
 	"Implement system-preference-aware theming.",
 ]
 
-const GEN_STATUSES: TaskStatus[] = ["todo", "in_progress", "in_review", "done"]
-const GEN_PRIORITIES: TaskPriority[] = ["low", "medium", "high", "urgent"]
-
 function generateLargeTasks(count: number): Task[] {
 	return Array.from({ length: count }, (_, i) => {
 		const month = (i % 12) + 1
@@ -53,8 +46,8 @@ function generateLargeTasks(count: number): Task[] {
 			id: `g${i}`,
 			title: `${TITLES[i % TITLES.length]!} #${Math.floor(i / TITLES.length) + 1}`,
 			description: DESCRIPTIONS[i % DESCRIPTIONS.length]!,
-			status: GEN_STATUSES[i % 4]!,
-			priority: GEN_PRIORITIES[Math.floor(i / 4) % 4]!,
+			status: TASK_STATUSES[i % TASK_STATUSES.length]!,
+			priority: TASK_PRIORITY_OPTIONS[Math.floor(i / 4) % TASK_PRIORITY_OPTIONS.length]!.value,
 			dueDate: dateStr,
 			createdAt,
 			updatedAt: createdAt,

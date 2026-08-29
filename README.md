@@ -106,6 +106,7 @@ src/
 │   └── utils.ts
 ├── mocks/
 │   ├── browser.ts
+│   ├── store.ts              # in-memory task list
 │   ├── handlers.ts           # GET/POST/PATCH/DELETE /api/tasks
 │   └── data.ts
 ├── pages/

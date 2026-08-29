@@ -1,76 +1,49 @@
-import { http, HttpResponse, delay } from "msw"
-import type {
-	CreateTaskInput,
-	UpdateTaskInput,
-} from "@/types/task"
-import { largeSeedTasks, seedTasks } from "./data"
+import { delay, http, HttpResponse } from "msw"
 
-const useLarge =
-	import.meta.env.DEV &&
-	typeof localStorage !== "undefined" &&
-	localStorage.getItem("large_dataset") === "true"
-
-let tasks = structuredClone(useLarge ? largeSeedTasks : seedTasks)
+import {
+	insertTask,
+	listTasks,
+	patchTask,
+	removeTask,
+	shouldSimulateError,
+} from "./store"
+import type { CreateTaskInput, UpdateTaskInput } from "@/types/task"
 
 const DELAY_MS = 400
 
-const shouldFail = () =>
-	import.meta.env.DEV &&
-	typeof localStorage !== "undefined" &&
-	localStorage.getItem("mock_error") === "true"
+function jsonError(message: string, status: number) {
+	return HttpResponse.json({ error: message }, { status })
+}
+
+async function withMock(respond: () => Response | Promise<Response>) {
+	await delay(DELAY_MS)
+	if (shouldSimulateError()) return jsonError("Simulated error", 500)
+	return respond()
+}
 
 export const handlers = [
-	http.get("/api/tasks", async () => {
-		await delay(DELAY_MS)
-		if (shouldFail())
-			return HttpResponse.json({ error: "Simulated error" }, { status: 500 })
-		return HttpResponse.json(tasks)
-	}),
+	http.get("/api/tasks", () => withMock(() => HttpResponse.json(listTasks()))),
 
-	http.post("/api/tasks", async ({ request }) => {
-		await delay(DELAY_MS)
-		if (shouldFail())
-			return HttpResponse.json({ error: "Simulated error" }, { status: 500 })
-		const body = (await request.json()) as CreateTaskInput
-		const now = new Date().toISOString()
-		const task = {
-			...body,
-			id: crypto.randomUUID(),
-			createdAt: now,
-			updatedAt: now,
-		}
-		tasks.push(task)
-		return HttpResponse.json(task, { status: 201 })
-	}),
+	http.post("/api/tasks", async ({ request }) =>
+		withMock(async () => {
+			const body = (await request.json()) as CreateTaskInput
+			return HttpResponse.json(insertTask(body), { status: 201 })
+		}),
+	),
 
-	http.patch("/api/tasks/:id", async ({ request, params }) => {
-		await delay(DELAY_MS)
-		if (shouldFail())
-			return HttpResponse.json({ error: "Simulated error" }, { status: 500 })
-		const id = params["id"] as string
-		const body = (await request.json()) as UpdateTaskInput
-		const index = tasks.findIndex((t) => t.id === id)
-		if (index === -1) {
-			return HttpResponse.json({ error: "Task not found" }, { status: 404 })
-		}
-		tasks[index] = {
-			...tasks[index]!,
-			...body,
-			updatedAt: new Date().toISOString(),
-		}
-		return HttpResponse.json(tasks[index])
-	}),
+	http.patch("/api/tasks/:id", async ({ request, params }) =>
+		withMock(async () => {
+			const body = (await request.json()) as UpdateTaskInput
+			const task = patchTask(String(params.id), body)
+			if (!task) return jsonError("Task not found", 404)
+			return HttpResponse.json(task)
+		}),
+	),
 
-	http.delete("/api/tasks/:id", async ({ params }) => {
-		await delay(DELAY_MS)
-		if (shouldFail())
-			return HttpResponse.json({ error: "Simulated error" }, { status: 500 })
-		const id = params["id"] as string
-		const index = tasks.findIndex((t) => t.id === id)
-		if (index === -1) {
-			return HttpResponse.json({ error: "Task not found" }, { status: 404 })
-		}
-		tasks.splice(index, 1)
-		return new HttpResponse(null, { status: 204 })
-	}),
+	http.delete("/api/tasks/:id", ({ params }) =>
+		withMock(() => {
+			if (!removeTask(String(params.id))) return jsonError("Task not found", 404)
+			return new HttpResponse(null, { status: 204 })
+		}),
+	),
 ]
