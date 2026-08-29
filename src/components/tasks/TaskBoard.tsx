@@ -13,16 +13,15 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable"
 import { useQueryClient } from "@tanstack/react-query"
 import { useMemo, useState } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
-import type { Task, TaskStatus } from "@/types/task"
+import { TASK_STATUSES, type Task, type TaskStatus } from "@/types/task"
 import type { TaskFilters } from "@/hooks/useTasksQuery"
 import { useTasksQuery } from "@/hooks/useTasksQuery"
 import { useTaskMutations } from "@/hooks/useTaskMutations"
-import { TaskCardOverlay } from "./TaskCard"
+import { TaskCard } from "./TaskCard"
 import { TaskColumn } from "./TaskColumn"
 import { TaskDeleteDialog } from "./TaskDeleteDialog"
 
-const COLUMNS: TaskStatus[] = ["todo", "in_progress", "in_review", "done"]
-const VALID_STATUSES = new Set<string>(COLUMNS)
+const VALID_STATUSES = new Set<string>(TASK_STATUSES)
 
 interface TaskBoardProps {
 	filters?: TaskFilters
@@ -39,7 +38,7 @@ export function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
 	const [activeTask, setActiveTask] = useState<Task | null>(null)
 
 	const tasksByStatus = useMemo(() => {
-		const groups = new Map<TaskStatus, Task[]>(COLUMNS.map((s) => [s, []]))
+		const groups = new Map<TaskStatus, Task[]>(TASK_STATUSES.map((s) => [s, []]))
 		for (const task of tasks) {
 			groups.get(task.status)?.push(task)
 		}
@@ -76,7 +75,7 @@ export function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
 	if (isLoading) {
 		return (
 			<div className='flex gap-4 h-full overflow-x-auto pb-2'>
-				{COLUMNS.map((col) => (
+				{TASK_STATUSES.map((col) => (
 					<div
 						key={col}
 						className='shrink-0 w-75 flex flex-col bg-gray-50 rounded-xl border border-gray-200'
@@ -129,7 +128,7 @@ export function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
 				onDragCancel={() => setActiveTask(null)}
 			>
 				<div className='flex gap-4 h-full overflow-x-auto pb-2'>
-					{COLUMNS.map((status) => (
+					{TASK_STATUSES.map((status) => (
 						<TaskColumn
 							key={status}
 							status={status}
@@ -142,7 +141,7 @@ export function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
 				</div>
 
 				<DragOverlay dropAnimation={null}>
-					{activeTask ? <TaskCardOverlay task={activeTask} /> : null}
+					{activeTask ? <TaskCard task={activeTask} overlay /> : null}
 				</DragOverlay>
 			</DndContext>
 

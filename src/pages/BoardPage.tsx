@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react"
-import { TaskBoard } from "@/features/tasks/components/TaskBoard"
-import { TaskFilters } from "@/features/tasks/components/TaskFilters"
-import { TaskFormDialog } from "@/features/tasks/components/TaskFormDialog"
+import { TaskBoard } from "@/components/tasks/TaskBoard"
+import { TaskFilters } from "@/components/tasks/TaskFilters"
+import { TaskFormDialog } from "@/components/tasks/TaskFormDialog"
 import { useTaskFilters } from "@/hooks/useTaskFilters"
 import type { Task, TaskStatus } from "@/types/task"
 

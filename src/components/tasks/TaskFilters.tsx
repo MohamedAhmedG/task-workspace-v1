@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select } from "@/components/ui/select"
 import { useTaskFilters } from "@/hooks/useTaskFilters"
+import { TASK_PRIORITY_OPTIONS, TASK_STATUS_OPTIONS } from "@/types/task"
 
 export function TaskFilters() {
 	const { filters, setFilter, clearFilters, hasActiveFilters } =
@@ -74,10 +75,7 @@ export function TaskFilters() {
 				onValueChange={(v) => setFilter("status", v === "all" ? "" : (v ?? ""))}
 				items={[
 					{ value: "all", label: "All statuses" },
-					{ value: "todo", label: "To Do" },
-					{ value: "in_progress", label: "In Progress" },
-					{ value: "in_review", label: "In Review" },
-					{ value: "done", label: "Done" },
+					...TASK_STATUS_OPTIONS,
 				]}
 			/>
 
@@ -91,10 +89,7 @@ export function TaskFilters() {
 				}
 				items={[
 					{ value: "all", label: "All priorities" },
-					{ value: "low", label: "Low" },
-					{ value: "medium", label: "Medium" },
-					{ value: "high", label: "High" },
-					{ value: "urgent", label: "Urgent" },
+					...TASK_PRIORITY_OPTIONS,
 				]}
 			/>
 

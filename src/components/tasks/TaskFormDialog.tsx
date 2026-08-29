@@ -8,7 +8,12 @@ import { Select } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { createTaskSchema, type TaskFormValues } from "@/schemas/task"
 import { useTaskMutations } from "@/hooks/useTaskMutations"
-import type { Task, TaskStatus } from "@/types/task"
+import {
+	TASK_PRIORITY_OPTIONS,
+	TASK_STATUS_OPTIONS,
+	type Task,
+	type TaskStatus,
+} from "@/types/task"
 
 interface TaskFormDialogProps {
 	open: boolean
@@ -142,12 +147,7 @@ export function TaskFormDialog({
 									value={field.value}
 									onValueChange={field.onChange}
 									className='w-full'
-									items={[
-										{ value: "todo", label: "To Do" },
-										{ value: "in_progress", label: "In Progress" },
-										{ value: "in_review", label: "In Review" },
-										{ value: "done", label: "Done" },
-									]}
+									items={TASK_STATUS_OPTIONS}
 								/>
 							)}
 						/>
@@ -164,12 +164,7 @@ export function TaskFormDialog({
 									value={field.value}
 									onValueChange={field.onChange}
 									className='w-full'
-									items={[
-										{ value: "low", label: "Low" },
-										{ value: "medium", label: "Medium" },
-										{ value: "high", label: "High" },
-										{ value: "urgent", label: "Urgent" },
-									]}
+									items={TASK_PRIORITY_OPTIONS}
 								/>
 							)}
 						/>
