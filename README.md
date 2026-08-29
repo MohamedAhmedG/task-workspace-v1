@@ -77,7 +77,6 @@ src/
 │   │   └── index.tsx         # Header + <Outlet />
 │   ├── Providers.tsx         # QueryClientProvider + Sonner Toaster
 │   ├── ErrorBoundary.tsx
-│   ├── PageFallback.tsx
 │   └── ui/                   # shadcn/ui primitives
 ├── features/
 │   └── tasks/
@@ -105,8 +104,9 @@ src/
 │   ├── BoardPage.tsx
 │   └── ListPage.tsx
 └── routes/
+    ├── PageFallback.tsx      # Suspense fallback for lazy pages
     ├── paths.ts              # ROUTES + navLinks
-    └── index.ts              # createBrowserRouter, lazy Board/List
+    └── index.tsx             # createBrowserRouter, lazy Board/List
 ```
 
 ### Routing

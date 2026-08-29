@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
-import { PageFallback } from '@/components/PageFallback'
+import { PageFallback } from './PageFallback'
 import { ROUTES } from './paths'
 
 const BoardPage = lazy(() =>
