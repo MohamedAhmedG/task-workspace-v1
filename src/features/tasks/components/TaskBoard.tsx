@@ -12,16 +12,6 @@ import {
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable"
 import { useQueryClient } from "@tanstack/react-query"
 import { useMemo, useState } from "react"
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { Task, TaskStatus } from "../types/task"
 import type { TaskFilters } from "../hooks/useTasksQuery"
@@ -29,6 +19,7 @@ import { useTasksQuery } from "../hooks/useTasksQuery"
 import { useTaskMutations } from "../hooks/useTaskMutations"
 import { TaskCardOverlay } from "./TaskCard"
 import { TaskColumn } from "./TaskColumn"
+import { TaskDeleteDialog } from "./TaskDeleteDialog"
 
 const COLUMNS: TaskStatus[] = ["todo", "in_progress", "in_review", "done"]
 const VALID_STATUSES = new Set<string>(COLUMNS)
@@ -155,35 +146,18 @@ export function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
 				</DragOverlay>
 			</DndContext>
 
-			<AlertDialog
+			<TaskDeleteDialog
 				open={deletingId !== null}
-				onOpenChange={(v) => {
-					if (!v) setDeletingId(null)
+				onOpenChange={(open) => {
+					if (!open) setDeletingId(null)
 				}}
-			>
-				<AlertDialogContent>
-					<AlertDialogHeader>
-						<AlertDialogTitle>Delete task?</AlertDialogTitle>
-						<AlertDialogDescription>
-							This action cannot be undone.
-						</AlertDialogDescription>
-					</AlertDialogHeader>
-					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
-						<AlertDialogAction
-							className='bg-red-600 hover:bg-red-700 focus-visible:ring-red-600'
-							onClick={() => {
-								if (deletingId) {
-									remove.mutate(deletingId)
-									setDeletingId(null)
-								}
-							}}
-						>
-							Delete
-						</AlertDialogAction>
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</AlertDialog>
+				onConfirm={() => {
+					if (deletingId) {
+						remove.mutate(deletingId)
+						setDeletingId(null)
+					}
+				}}
+			/>
 		</>
 	)
 }

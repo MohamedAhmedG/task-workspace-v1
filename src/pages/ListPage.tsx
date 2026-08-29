@@ -8,17 +8,8 @@ import {
 } from "lucide-react"
 import { useMemo, useRef, useState } from "react"
 import { formatDate } from "@/lib/utils"
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 import { Skeleton } from "@/components/ui/skeleton"
+import { TaskDeleteDialog } from "@/features/tasks/components/TaskDeleteDialog"
 import { TaskFilters } from "@/features/tasks/components/TaskFilters"
 import { TaskFormDialog } from "@/features/tasks/components/TaskFormDialog"
 import { useTaskFilters } from "@/features/tasks/hooks/useTaskFilters"
@@ -104,11 +95,7 @@ function SortHeader({
 		<div
 			role='columnheader'
 			aria-sort={
-				field === active
-					? dir === "asc"
-						? "ascending"
-						: "descending"
-					: "none"
+				field === active ? (dir === "asc" ? "ascending" : "descending") : "none"
 			}
 		>
 			<button type='button' className={className} onClick={onClick}>
@@ -431,35 +418,18 @@ export function ListPage() {
 				task={editingTask}
 			/>
 
-			<AlertDialog
+			<TaskDeleteDialog
 				open={deletingId !== null}
-				onOpenChange={(v) => {
-					if (!v) setDeletingId(null)
+				onOpenChange={(open) => {
+					if (!open) setDeletingId(null)
 				}}
-			>
-				<AlertDialogContent>
-					<AlertDialogHeader>
-						<AlertDialogTitle>Delete task?</AlertDialogTitle>
-						<AlertDialogDescription>
-							This action cannot be undone.
-						</AlertDialogDescription>
-					</AlertDialogHeader>
-					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
-						<AlertDialogAction
-							className='bg-red-600 hover:bg-red-700 focus-visible:ring-red-600'
-							onClick={() => {
-								if (deletingId) {
-									remove.mutate(deletingId)
-									setDeletingId(null)
-								}
-							}}
-						>
-							Delete
-						</AlertDialogAction>
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</AlertDialog>
+				onConfirm={() => {
+					if (deletingId) {
+						remove.mutate(deletingId)
+						setDeletingId(null)
+					}
+				}}
+			/>
 		</div>
 	)
 }
