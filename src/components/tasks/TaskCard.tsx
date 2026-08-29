@@ -102,7 +102,7 @@ function TaskCardItem({
 						type='button'
 						ref={setActivatorNodeRef}
 						aria-label={`Drag "${task.title}"`}
-						className='p-0.5 text-gray-300 hover:text-gray-500 rounded opacity-0 group-hover:opacity-100 focus-visible:opacity-100 cursor-grab active:cursor-grabbing touch-none transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1'
+						className='p-0.5 text-gray-300 hover:text-gray-500 rounded xl:opacity-0 group-hover:opacity-100 focus-visible:opacity-100 cursor-grab active:cursor-grabbing touch-none transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1'
 						onClick={(e) => e.stopPropagation()}
 						{...attributes}
 						{...listeners}
@@ -113,7 +113,7 @@ function TaskCardItem({
 					<button
 						type='button'
 						aria-label={`Delete "${task.title}"`}
-						className='p-0.5 text-gray-400 hover:text-red-500 rounded opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1'
+						className='p-0.5 text-gray-400 hover:text-red-500 rounded xl:opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1'
 						onClick={(e) => {
 							e.stopPropagation()
 							onDelete(task.id)
