@@ -43,7 +43,7 @@ export function useTaskMutations() {
       toast.error('Failed to update task')
     },
     onSuccess: (_task, { silent }) => {
-      if (!silent) toast.success('Task updated')
+      if (!silent) toast.info('Task updated')
     },
     onSettled: () => {
       invalidate()
@@ -53,7 +53,7 @@ export function useTaskMutations() {
   const remove = useMutation({
     mutationFn: (id: string) => deleteTask(id),
     onSuccess: () => {
-      toast.success('Task deleted')
+      toast.warning('Task deleted')
       invalidate()
     },
     onError: () => toast.error('Failed to delete task'),

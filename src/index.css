@@ -124,7 +124,10 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply outline-ring/50;
+  }
+  *:not([data-sonner-toast], [data-sonner-toast] *) {
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
@@ -132,4 +135,37 @@
   html {
     @apply font-sans;
   }
+}
+
+[data-sonner-toast][data-type='success'] {
+  background: oklch(0.94 0.05 155) !important;
+  border-color: oklch(0.72 0.14 155) !important;
+  color: oklch(0.39 0.12 155) !important;
+}
+
+[data-sonner-toast][data-type='info'] {
+  background: oklch(0.94 0.04 250) !important;
+  border-color: oklch(0.68 0.14 250) !important;
+  color: oklch(0.42 0.15 255) !important;
+}
+
+[data-sonner-toast][data-type='warning'] {
+  background: oklch(0.95 0.06 75) !important;
+  border-color: oklch(0.72 0.15 55) !important;
+  color: oklch(0.45 0.14 50) !important;
+}
+
+[data-sonner-toast][data-type='error'] {
+  background: oklch(0.94 0.04 20) !important;
+  border-color: oklch(0.68 0.18 25) !important;
+  color: oklch(0.48 0.18 25) !important;
+}
+
+[data-sonner-toast][data-type='success'] [data-close-button],
+[data-sonner-toast][data-type='info'] [data-close-button],
+[data-sonner-toast][data-type='warning'] [data-close-button],
+[data-sonner-toast][data-type='error'] [data-close-button] {
+  background: inherit !important;
+  border-color: inherit !important;
+  color: inherit !important;
 }

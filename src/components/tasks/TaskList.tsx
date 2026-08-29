@@ -164,7 +164,7 @@ function ListRow({
 			<span className='text-xs text-gray-400'>
 				{formatDate(task.createdAt)}
 			</span>
-			<div className='flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity'>
+			<div className='flex items-center gap-1 opacity-100 xl:opacity-0 xl:group-hover:opacity-100 xl:group-focus-within:opacity-100 transition-opacity'>
 				<button
 					type='button'
 					aria-label={`Edit "${task.title}"`}
