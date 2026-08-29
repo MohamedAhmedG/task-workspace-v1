@@ -1,24 +1,51 @@
-export type TaskStatus = 'todo' | 'in_progress' | 'in_review' | 'done'
-export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
+export const TASK_STATUSES = [
+  "todo",
+  "in_progress",
+  "in_review",
+  "done",
+] as const
 
-export const TASK_STATUS_OPTIONS: { value: TaskStatus; label: string }[] = [
-  { value: 'todo', label: 'To Do' },
-  { value: 'in_progress', label: 'In Progress' },
-  { value: 'in_review', label: 'In Review' },
-  { value: 'done', label: 'Done' },
-]
+export type TaskStatus = (typeof TASK_STATUSES)[number]
 
-export const TASK_PRIORITY_OPTIONS: { value: TaskPriority; label: string }[] = [
-  { value: 'low', label: 'Low' },
-  { value: 'medium', label: 'Medium' },
-  { value: 'high', label: 'High' },
-  { value: 'urgent', label: 'Urgent' },
-]
+export const TASK_PRIORITIES = [
+  "low",
+  "medium",
+  "high",
+  "urgent",
+] as const
 
-export const TASK_STATUSES = TASK_STATUS_OPTIONS.map((option) => option.value)
+export type TaskPriority = (typeof TASK_PRIORITIES)[number]
+
+export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
+  todo: "To Do",
+  in_progress: "In Progress",
+  in_review: "In Review",
+  done: "Done",
+}
+
+export const TASK_PRIORITY_LABELS: Record<TaskPriority, string> = {
+  low: "Low",
+  medium: "Medium",
+  high: "High",
+  urgent: "Urgent",
+}
+
+export const TASK_STATUS_OPTIONS = TASK_STATUSES.map((value) => ({
+  value,
+  label: TASK_STATUS_LABELS[value],
+}))
+
+export const TASK_PRIORITY_OPTIONS = TASK_PRIORITIES.map((value) => ({
+  value,
+  label: TASK_PRIORITY_LABELS[value],
+}))
 
 export function isTaskStatus(value: string): value is TaskStatus {
   return TASK_STATUSES.some((status) => status === value)
+}
+
+export function isTaskPriority(value: string): value is TaskPriority {
+  return TASK_PRIORITIES.some((priority) => priority === value)
 }
 
 export const TASK_STATUS_ORDER = Object.fromEntries(
@@ -31,14 +58,6 @@ export const TASK_PRIORITY_ORDER: Record<TaskPriority, number> = {
   medium: 2,
   low: 3,
 }
-
-export const TASK_STATUS_LABELS = Object.fromEntries(
-  TASK_STATUS_OPTIONS.map(({ value, label }) => [value, label]),
-) as Record<TaskStatus, string>
-
-export const TASK_PRIORITY_LABELS = Object.fromEntries(
-  TASK_PRIORITY_OPTIONS.map(({ value, label }) => [value, label]),
-) as Record<TaskPriority, string>
 
 export interface Task {
   id: string
@@ -65,6 +84,14 @@ export interface UpdateTaskInput {
   status?: TaskStatus
   priority?: TaskPriority
   dueDate?: string
+}
+
+export interface TaskFilters {
+  status?: TaskStatus | ""
+  priority?: TaskPriority | ""
+  q?: string
+  from?: string
+  to?: string
 }
 
 export type TaskSortField = Extract<

@@ -1,4 +1,4 @@
-import { TASK_PRIORITY_OPTIONS, TASK_STATUSES, type Task } from "@/types/task"
+import { TASK_PRIORITIES, TASK_STATUSES, type Task } from "@/types/task"
 
 const TITLES = [
 	"Design system audit",
@@ -47,7 +47,7 @@ function generateLargeTasks(count: number): Task[] {
 			title: `${TITLES[i % TITLES.length]!} #${Math.floor(i / TITLES.length) + 1}`,
 			description: DESCRIPTIONS[i % DESCRIPTIONS.length]!,
 			status: TASK_STATUSES[i % TASK_STATUSES.length]!,
-			priority: TASK_PRIORITY_OPTIONS[Math.floor(i / 4) % TASK_PRIORITY_OPTIONS.length]!.value,
+			priority: TASK_PRIORITIES[Math.floor(i / 4) % TASK_PRIORITIES.length]!,
 			dueDate: dateStr,
 			createdAt,
 			updatedAt: createdAt,

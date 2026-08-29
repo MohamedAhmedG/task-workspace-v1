@@ -13,13 +13,13 @@ import {
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable"
 import { useMemo, useState } from "react"
 
-import type { TaskFilters } from "@/hooks/useTasksQuery"
 import { useTaskMutations } from "@/hooks/useTaskMutations"
 import { useTasksQuery } from "@/hooks/useTasksQuery"
 import {
 	TASK_STATUSES,
 	isTaskStatus,
 	type Task,
+	type TaskFilters,
 	type TaskStatus,
 } from "@/types/task"
 import { TaskCard } from "./TaskCard"
@@ -44,7 +44,7 @@ function statusFromDrop(overId: UniqueIdentifier, tasks: Task[]) {
 }
 
 function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
-	const { tasks, isLoading, isError } = useTasksQuery(filters)
+	const { tasks, isLoading, isError, refetch } = useTasksQuery(filters)
 	const { remove, update } = useTaskMutations()
 
 	const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -80,12 +80,16 @@ function TaskBoard({ filters, onEdit, onAddTask }: TaskBoardProps) {
 
 		const targetStatus = statusFromDrop(over.id, tasks)
 		if (targetStatus && targetStatus !== dragged.status) {
-			update.mutate({ id: dragged.id, data: { status: targetStatus } })
+			update.mutate({
+				id: dragged.id,
+				data: { status: targetStatus },
+				silent: true,
+			})
 		}
 	}
 
 	if (isLoading) return <TaskBoardSkeleton />
-	if (isError) return <TaskError className='h-64' />
+	if (isError) return <TaskError className='h-64' onRetry={() => refetch()} />
 
 	return (
 		<>

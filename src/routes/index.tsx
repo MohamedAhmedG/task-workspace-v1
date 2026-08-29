@@ -12,8 +12,6 @@ const ListPage = lazy(() =>
   import('@/pages/ListPage').then((m) => ({ default: m.ListPage }))
 )
 
-export { ROUTES, navLinks } from './paths'
-
 export const router = createBrowserRouter([
   {
     element: <Layout />,

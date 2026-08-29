@@ -45,7 +45,7 @@ npm run lint       # oxlint
 ## Features
 
 **Board view** — Kanban board with To Do / In Progress / In Review / Done columns.
-- Click a card (or the header **New task** button) to create or edit
+- Click a card (or the header **Add task** button) to create or edit
 - Add a task to a specific column from the column header
 - Drag a card to a different column to change its status (optimistic PATCH)
 - Keyboard drag is supported (dnd-kit `KeyboardSensor`)
@@ -69,7 +69,7 @@ npm run lint       # oxlint
 - Description (optional, max 500 chars)
 - Status, priority, and due date (due date required)
 
-**Errors** — Route render failures use React Router `errorElement` (`RouteError`). The recovery action navigates home (`/`).
+**Errors** — Route render failures use React Router `errorElement` (`RouteError`). The recovery action navigates home (`/`). Query load failures show **Retry**, which calls TanStack Query `refetch()` without reloading the page.
 
 ---
 
@@ -101,7 +101,8 @@ src/
 │   └── ui/                   # composed shadcn primitives (Select, Dialog, AlertDialog, …)
 ├── lib/
 │   ├── api-client.ts         # shared Axios instance (baseURL: /api)
-│   ├── task-list.ts          # list table columns + row layout
+│   ├── task-filter.ts        # client-side filter + hasActiveFilters
+│   ├── task-list.ts          # list columns, row layout, sortTasks
 │   ├── task-styles.ts        # status/priority badges + column dots
 │   └── utils.ts
 ├── mocks/
@@ -121,7 +122,7 @@ src/
 
 `api`, `hooks`, `schemas`, and `types` live at `src/` so they are app-wide. Task UI lives in `src/components/tasks/`.
 
-Status and priority **values and labels** are defined once in `src/types/task.ts` (`TASK_STATUS_OPTIONS`, `TASK_PRIORITY_OPTIONS`, and the derived `LABELS` / `TASK_STATUSES`). Forms, filters, the board columns, and the list badges all read from there. Colors (badges and column dots) live in `src/lib/task-styles.ts`.
+Status and priority **values** are defined once as `TASK_STATUSES` / `TASK_PRIORITIES` in `src/types/task.ts`. Labels, form/filter options, board columns, and Zod enums (`src/schemas/task.ts`) are derived from those arrays. Colors (badges and column dots) live in `src/lib/task-styles.ts`.
 
 ### Routing
 
@@ -167,7 +168,7 @@ Query defaults (in `main.tsx`): `staleTime` 1 minute, `retry: 1`.
 
 ### Drag and drop
 
-Cross-column drags change status through the same `updateTask()` mutation used by the edit form:
+Cross-column drags change status through the same `updateTask()` mutation used by the edit form (success toast is skipped for drag):
 
 1. Snapshot the current query cache.
 2. Apply the status change directly to the cache.
@@ -193,7 +194,7 @@ Board and List share `TaskDeleteDialog` for the confirm step.
 
 ## Trade-offs and known limitations
 
-**MSW mock data resets on page refresh.** The in-memory mock store (`tasks` array in `handlers.ts`) is re-initialized from `seedTasks` on every full page reload. This is intentional for a demo environment — no backend persistence is expected.
+**MSW mock data resets on page refresh.** The in-memory mock store (`src/mocks/store.ts`) is re-initialized from `seedTasks` on every full page reload. This is intentional for a demo environment — no backend persistence is expected.
 
 **Development-only helpers.** In local development, `localStorage.setItem('mock_error', 'true')` simulates API failures, and `localStorage.setItem('large_dataset', 'true')` loads 1,000 generated tasks. Production builds ignore both flags.
 

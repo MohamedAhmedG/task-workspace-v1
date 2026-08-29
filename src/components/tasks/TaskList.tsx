@@ -9,57 +9,26 @@ import {
 import { useMemo, useRef, useState } from "react"
 
 import { Skeleton } from "@/components/ui/skeleton"
-import type { TaskFilters } from "@/hooks/useTasksQuery"
 import { useTaskMutations } from "@/hooks/useTaskMutations"
-import { useTasksQuery } from "@/hooks/useTasksQuery"
 import {
+	sortTasks,
 	TASK_LIST_ROW_GRID,
 	TASK_LIST_ROW_HEIGHT,
 	TASK_SORT_COLUMNS,
 } from "@/lib/task-list"
 import { formatDate } from "@/lib/utils"
-import {
-	TASK_PRIORITY_ORDER,
-	TASK_STATUS_ORDER,
-	type Task,
-	type TaskSortDir,
-	type TaskSortField,
-} from "@/types/task"
+import type { Task, TaskSortDir, TaskSortField } from "@/types/task"
 import { TaskBadge } from "./TaskBadge"
 import { TaskDeleteDialog } from "./TaskDeleteDialog"
 import { TaskError } from "./TaskState"
 
 type TaskListProps = {
-	filters?: TaskFilters
+	tasks: Task[]
+	isLoading: boolean
+	isError: boolean
+	onRetry: () => void
+	hasActiveFilters: boolean
 	onEdit: (task: Task) => void
-}
-
-function sortTasks(
-	tasks: Task[],
-	field: TaskSortField,
-	dir: TaskSortDir,
-): Task[] {
-	return [...tasks].sort((a, b) => {
-		let cmp = 0
-		switch (field) {
-			case "title":
-				cmp = a.title.localeCompare(b.title)
-				break
-			case "priority":
-				cmp = TASK_PRIORITY_ORDER[a.priority] - TASK_PRIORITY_ORDER[b.priority]
-				break
-			case "status":
-				cmp = TASK_STATUS_ORDER[a.status] - TASK_STATUS_ORDER[b.status]
-				break
-			case "dueDate":
-				cmp = a.dueDate.localeCompare(b.dueDate)
-				break
-			case "createdAt":
-				cmp = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-				break
-		}
-		return dir === "asc" ? cmp : -cmp
-	})
 }
 
 function SortIndicator({
@@ -194,10 +163,7 @@ function ListRow({
 				{task.dueDate ? formatDate(task.dueDate) : "—"}
 			</span>
 			<span className='text-xs text-gray-400'>
-				{new Date(task.createdAt).toLocaleDateString("en-US", {
-					month: "short",
-					day: "numeric",
-				})}
+				{formatDate(task.createdAt)}
 			</span>
 			<div className='flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity'>
 				<button
@@ -221,11 +187,15 @@ function ListRow({
 	)
 }
 
-function TaskList({ filters = {}, onEdit }: TaskListProps) {
-	const { tasks, isLoading, isError } = useTasksQuery(filters)
+function TaskList({
+	tasks,
+	isLoading,
+	isError,
+	onRetry,
+	hasActiveFilters,
+	onEdit,
+}: TaskListProps) {
 	const { remove } = useTaskMutations()
-	const { q = "", status = "", priority = "", from = "", to = "" } = filters
-	const hasActiveFilters = !!(q || status || priority || from || to)
 
 	const [sortField, setSortField] = useState<TaskSortField>("createdAt")
 	const [sortDir, setSortDir] = useState<TaskSortDir>("desc")
@@ -281,7 +251,7 @@ function TaskList({ filters = {}, onEdit }: TaskListProps) {
 						{isLoading ? (
 							<ListSkeleton />
 						) : isError ? (
-							<TaskError className='flex-1' />
+							<TaskError className='flex-1' onRetry={onRetry} />
 						) : sortedTasks.length === 0 ? (
 							<ListEmpty hasActiveFilters={hasActiveFilters} />
 						) : (

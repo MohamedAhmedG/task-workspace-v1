@@ -1,6 +1,7 @@
 import { memo } from "react"
 import { useDroppable } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import { Plus } from "lucide-react"
 import { TASK_STATUS_DOTS } from "@/lib/task-styles"
 import { TASK_STATUS_LABELS, type Task, type TaskStatus } from "@/types/task"
 import { TaskCard } from "./TaskCard"
@@ -41,20 +42,7 @@ export const TaskColumn = memo(function TaskColumn({
 					className='text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded p-1 transition-colors'
 					onClick={() => onAddTask(status)}
 				>
-					<svg
-						xmlns='http://www.w3.org/2000/svg'
-						width='16'
-						height='16'
-						viewBox='0 0 24 24'
-						fill='none'
-						stroke='currentColor'
-						strokeWidth='2'
-						strokeLinecap='round'
-						strokeLinejoin='round'
-						aria-hidden='true'
-					>
-						<path d='M12 5v14M5 12h14' />
-					</svg>
+					<Plus size={16} aria-hidden='true' />
 				</button>
 			</div>
 

@@ -9,8 +9,8 @@ import { useTasksQuery } from "@/hooks/useTasksQuery"
 import type { Task } from "@/types/task"
 
 function ListPage() {
-	const { filters } = useTaskFilters()
-	const { tasks, isLoading } = useTasksQuery(filters)
+	const { filters, hasActiveFilters } = useTaskFilters()
+	const { tasks, isLoading, isError, refetch } = useTasksQuery(filters)
 	const [formOpen, setFormOpen] = useState(false)
 	const [editingTask, setEditingTask] = useState<Task | null>(null)
 
@@ -52,7 +52,14 @@ function ListPage() {
 				<TaskFilters />
 			</div>
 
-			<TaskList filters={filters} onEdit={handleEdit} />
+			<TaskList
+				tasks={tasks}
+				isLoading={isLoading}
+				isError={isError}
+				onRetry={() => refetch()}
+				hasActiveFilters={hasActiveFilters}
+				onEdit={handleEdit}
+			/>
 
 			<TaskFormDialog
 				open={formOpen}

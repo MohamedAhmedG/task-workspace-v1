@@ -18,8 +18,14 @@ export function useTaskMutations() {
   })
 
   const update = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateTaskInput }) =>
-      updateTask(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string
+      data: UpdateTaskInput
+      silent?: boolean
+    }) => updateTask(id, data),
     onMutate: async ({ id, data }) => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] })
       const previousTasks = queryClient.getQueryData<Task[]>(['tasks'])
@@ -36,8 +42,8 @@ export function useTaskMutations() {
       }
       toast.error('Failed to update task')
     },
-    onSuccess: () => {
-      toast.success('Task updated')
+    onSuccess: (_task, { silent }) => {
+      if (!silent) toast.success('Task updated')
     },
     onSettled: () => {
       invalidate()

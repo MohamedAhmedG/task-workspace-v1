@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom"
 import { navLinks } from "@/routes/paths"
 
 export function Header() {
-	const { pathname } = useLocation()
+	const { pathname, search } = useLocation()
 
 	return (
 		<header className='bg-white border-b border-gray-200 sticky top-0 z-10'>
@@ -38,7 +38,7 @@ export function Header() {
 						return (
 							<Link
 								key={link.to}
-								to={link.to}
+								to={{ pathname: link.to, search }}
 								aria-current={isActive ? "page" : undefined}
 								className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
 									isActive

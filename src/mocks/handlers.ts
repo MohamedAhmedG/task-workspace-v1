@@ -1,5 +1,6 @@
 import { delay, http, HttpResponse } from "msw"
 
+import { createTaskSchema, updateTaskSchema } from "@/schemas/task"
 import {
 	insertTask,
 	listTasks,
@@ -7,7 +8,6 @@ import {
 	removeTask,
 	shouldSimulateError,
 } from "./store"
-import type { CreateTaskInput, UpdateTaskInput } from "@/types/task"
 
 const DELAY_MS = 400
 
@@ -26,15 +26,17 @@ export const handlers = [
 
 	http.post("/api/tasks", async ({ request }) =>
 		withMock(async () => {
-			const body = (await request.json()) as CreateTaskInput
-			return HttpResponse.json(insertTask(body), { status: 201 })
+			const parsed = createTaskSchema.safeParse(await request.json())
+			if (!parsed.success) return jsonError("Invalid request", 400)
+			return HttpResponse.json(insertTask(parsed.data), { status: 201 })
 		}),
 	),
 
 	http.patch("/api/tasks/:id", async ({ request, params }) =>
 		withMock(async () => {
-			const body = (await request.json()) as UpdateTaskInput
-			const task = patchTask(String(params.id), body)
+			const parsed = updateTaskSchema.safeParse(await request.json())
+			if (!parsed.success) return jsonError("Invalid request", 400)
+			const task = patchTask(String(params.id), parsed.data)
 			if (!task) return jsonError("Task not found", 404)
 			return HttpResponse.json(task)
 		}),

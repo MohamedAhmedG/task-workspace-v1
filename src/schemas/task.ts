@@ -1,25 +1,15 @@
-import { z } from 'zod'
+import { z } from "zod"
+import { TASK_PRIORITIES, TASK_STATUSES } from "@/types/task"
 
-export const taskStatusSchema = z.enum(['todo', 'in_progress', 'in_review', 'done'])
-export const taskPrioritySchema = z.enum(['low', 'medium', 'high', 'urgent'])
-
-export const taskSchema = z.object({
-  id: z.string(),
-  title: z.string().min(1),
-  description: z.string(),
-  status: taskStatusSchema,
-  priority: taskPrioritySchema,
-  dueDate: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
+const taskStatusSchema = z.enum(TASK_STATUSES)
+const taskPrioritySchema = z.enum(TASK_PRIORITIES)
 
 export const createTaskSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(100, 'Title is too long'),
-  description: z.string().max(500, 'Description is too long'),
+  title: z.string().min(1, "Title is required").max(100, "Title is too long"),
+  description: z.string().max(500, "Description is too long"),
   status: taskStatusSchema,
   priority: taskPrioritySchema,
-  dueDate: z.string().min(1, 'Due date is required'),
+  dueDate: z.string().min(1, "Due date is required"),
 })
 
 export const updateTaskSchema = createTaskSchema.partial()
