@@ -9,13 +9,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select"
+import { Select } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { createTaskSchema, type TaskFormValues } from "../schemas/task"
 import { useTaskMutations } from "../hooks/useTaskMutations"
@@ -129,17 +123,18 @@ export function TaskFormDialog({
 								name='status'
 								control={form.control}
 								render={({ field }) => (
-									<Select value={field.value} onValueChange={field.onChange}>
-										<SelectTrigger id='task-status'>
-											<SelectValue />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value='todo'>To Do</SelectItem>
-											<SelectItem value='in_progress'>In Progress</SelectItem>
-											<SelectItem value='in_review'>In Review</SelectItem>
-											<SelectItem value='done'>Done</SelectItem>
-										</SelectContent>
-									</Select>
+									<Select
+										id='task-status'
+										value={field.value}
+										onValueChange={field.onChange}
+										className='w-full'
+										items={[
+											{ value: "todo", label: "To Do" },
+											{ value: "in_progress", label: "In Progress" },
+											{ value: "in_review", label: "In Review" },
+											{ value: "done", label: "Done" },
+										]}
+									/>
 								)}
 							/>
 						</div>
@@ -150,17 +145,18 @@ export function TaskFormDialog({
 								name='priority'
 								control={form.control}
 								render={({ field }) => (
-									<Select value={field.value} onValueChange={field.onChange}>
-										<SelectTrigger id='task-priority'>
-											<SelectValue />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value='low'>Low</SelectItem>
-											<SelectItem value='medium'>Medium</SelectItem>
-											<SelectItem value='high'>High</SelectItem>
-											<SelectItem value='urgent'>Urgent</SelectItem>
-										</SelectContent>
-									</Select>
+									<Select
+										id='task-priority'
+										value={field.value}
+										onValueChange={field.onChange}
+										className='w-full'
+										items={[
+											{ value: "low", label: "Low" },
+											{ value: "medium", label: "Medium" },
+											{ value: "high", label: "High" },
+											{ value: "urgent", label: "Urgent" },
+										]}
+									/>
 								)}
 							/>
 						</div>

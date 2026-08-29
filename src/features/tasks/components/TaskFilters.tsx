@@ -2,13 +2,7 @@ import { Search, X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select"
+import { Select } from "@/components/ui/select"
 import { useTaskFilters } from "../hooks/useTaskFilters"
 
 export function TaskFilters() {
@@ -73,38 +67,36 @@ export function TaskFilters() {
 			</div>
 
 			<Select
+				className='w-37'
+				aria-label='Filter by status'
+				placeholder='All statuses'
 				value={filters.status || "all"}
 				onValueChange={(v) => setFilter("status", v === "all" ? "" : (v ?? ""))}
-			>
-				<SelectTrigger className='w-37' aria-label='Filter by status'>
-					<SelectValue placeholder='All statuses' />
-				</SelectTrigger>
-				<SelectContent>
-					<SelectItem value='all'>All statuses</SelectItem>
-					<SelectItem value='todo'>To Do</SelectItem>
-					<SelectItem value='in_progress'>In Progress</SelectItem>
-					<SelectItem value='in_review'>In Review</SelectItem>
-					<SelectItem value='done'>Done</SelectItem>
-				</SelectContent>
-			</Select>
+				items={[
+					{ value: "all", label: "All statuses" },
+					{ value: "todo", label: "To Do" },
+					{ value: "in_progress", label: "In Progress" },
+					{ value: "in_review", label: "In Review" },
+					{ value: "done", label: "Done" },
+				]}
+			/>
 
 			<Select
+				className='w-37'
+				aria-label='Filter by priority'
+				placeholder='All priorities'
 				value={filters.priority || "all"}
 				onValueChange={(v) =>
 					setFilter("priority", v === "all" ? "" : (v ?? ""))
 				}
-			>
-				<SelectTrigger className='w-37' aria-label='Filter by priority'>
-					<SelectValue placeholder='All priorities' />
-				</SelectTrigger>
-				<SelectContent>
-					<SelectItem value='all'>All priorities</SelectItem>
-					<SelectItem value='low'>Low</SelectItem>
-					<SelectItem value='medium'>Medium</SelectItem>
-					<SelectItem value='high'>High</SelectItem>
-					<SelectItem value='urgent'>Urgent</SelectItem>
-				</SelectContent>
-			</Select>
+				items={[
+					{ value: "all", label: "All priorities" },
+					{ value: "low", label: "Low" },
+					{ value: "medium", label: "Medium" },
+					{ value: "high", label: "High" },
+					{ value: "urgent", label: "Urgent" },
+				]}
+			/>
 
 			<div className='flex items-center gap-1.5'>
 				<label
